@@ -46,47 +46,4 @@ require("./utils/utilsMain")(client);
 require("colors");
 require('./utils/handler')(client);
 
-const commands = [];
-const slashCommandFiles = fs.readdirSync('./slashCommands').filter(file => file.endsWith('.js'));
-
-const clientId = '784903173767823370';
-
-// const guildid = 'id'
-
-for (const file of slashCommandFiles) {
-    const command = require(`./slashCommands/${file}`);
-    commands.push(command.data.toJSON());
-}
-//used in help.js
-Array.prototype.remove = function () {
-    let what, a = arguments, L = a.length, ax;
-    while (L && this.length) {
-        what = a[--L];
-        while ((ax = this.indexOf(what)) !== -1) {
-            this.splice(ax, 1);
-        }
-    }
-    return this;
-};
-
-
-const rest = new REST({ version: '9' }).setToken(process.env.token);
-
-(async () => {
-    try {
-        console.log(`> Started refreshing application (/) commands.`)
-
-        await rest.put(
-            Routes.applicationCommands(clientId),
-            { body: commands },
-        );
-
-        console.log(`> Successfully reloaded application (/) commands.`)
-    } catch (error) {
-        console.error(error);
-    }
-})();
-
-
-
 client.login(process.env.token)
