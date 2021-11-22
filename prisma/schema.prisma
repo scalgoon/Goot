@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  id         String @unique
+  name       String
+  logchannel String? @unique
+}
+
+model CCommands {
+  id   String @id
+  name String
+  text String
+  guild String
+  deltrig Boolean?
+}
+
+model CCEmbeds {
+  id          String @id
+  title       String?
+  description String
+  guild String
+  deltrig Boolean?
+}
