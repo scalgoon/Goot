@@ -51,7 +51,7 @@ const slashCommandFiles = fs.readdirSync('./slashCommands').filter(file => file.
 
 const clientId = '784903173767823370';
 
-// const guildid = '804846257729175623'
+// const guildid = 'id'
 
 for (const file of slashCommandFiles) {
     const command = require(`./slashCommands/${file}`);
