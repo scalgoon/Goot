@@ -31,7 +31,7 @@ module.exports = {
 
             const exists = await prisma.cCommands.findUnique({
                 where: {
-                    id: triggertouse,
+                    placeholder: `${name + interaction.guild.id}`,
                 },
                 select: {
                     guild: true
@@ -43,11 +43,9 @@ module.exports = {
                 if (exists.guild === interaction.guild.id) {
                     await prisma.cCommands.delete({
                         where: {
-                            id: triggertouse,
+                            placeholder: `${name + interaction.guild.id}`,
                         }
                     })
-
-                    client.log("Prisma", `Command deleted with trigger ${triggertouse}`)
 
                     let embed = new MessageEmbed()
                         .setTitle("Command Removed")
@@ -74,7 +72,7 @@ module.exports = {
 
             const exists = await prisma.cCEmbeds.findUnique({
                 where: {
-                    id: triggertouse,
+                    placeholder: `${name + interaction.guild.id}`,
                 },
                 select: {
                     guild: true
@@ -86,11 +84,10 @@ module.exports = {
                 if (exists.guild === interaction.guild.id) {
                     await prisma.cCEmbeds.delete({
                         where: {
-                            id: triggertouse,
+                            placeholder: `${name + interaction.guild.id}`,
                         }
                     })
 
-                    client.log("Prisma", `Command deleted with trigger ${triggertouse}`)
 
                     let embed = new MessageEmbed()
                         .setTitle("Command Removed")
