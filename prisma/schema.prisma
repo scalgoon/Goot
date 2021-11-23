@@ -14,17 +14,21 @@ model Guild {
 }
 
 model CCommands {
-  id   String @id
+  id   String 
+  placeholder String @unique @default("//k/")
   name String
   text String
   guild String
   deltrig Boolean?
+  permission String?
 }
 
 model CCEmbeds {
-  id          String @id
+  id          String 
+  placeholder String @unique @default("//l/")
   title       String?
   description String
   guild String
   deltrig Boolean?
+  permission String?
 }
