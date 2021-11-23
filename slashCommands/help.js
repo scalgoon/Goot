@@ -40,7 +40,7 @@ module.exports = {
         let embed = new MessageEmbed()
             .setTitle("Help Embed")
             .setDescription("Here is a list of my available commands you can use in your server.\nEmojis provided by [Icons](https://discord.gg/9AtkECMX2P)")
-            .addField("<:slash:908546180265422909> Slash Commands", client.commands.map(c => '`' + c.name + '`').join(', '))
+            .addField("<:slash:908546180265422909> Slash Commands", client.commands.map(c => '`' + c.data.name + '`').join(', '))
             .setColor("RANDOM")
 
         if (ar) {
