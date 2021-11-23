@@ -1,13 +1,25 @@
 <h1>Goot! The bot made by you.</h1>
-<p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.3.9-blue.svg?cacheSeconds=2592000" />
-  </a>
-</p>
+
+
+![Version](https://img.shields.io/badge/version-1.3.9-green.svg?cacheSeconds=2592000&style=for-the-badge)
+![botlib](https://img.shields.io/badge/powered_by-discord.js-blue?style=for-the-badge)
+
 
 ## Installing the modules
 
 ```sh
 npm install
+```
+
+## Running the bot
+```sh
+node .
+```
+
+## .env file
+```json
+DATABASE_URL=
+token=
 ```
 
 ## Goot's prefix
