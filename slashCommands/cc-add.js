@@ -19,7 +19,7 @@ module.exports = {
       .addStringOption(option => option.setName('description').setDescription('Enter description for the embed').setRequired(true))
       .addStringOption(option => option.setName('permissions').setDescription('Set the perms required to run the command').addChoice('User', 'user').addChoice('Staff', 'staff').addChoice('Admin', 'admin').setRequired(true))
       .addStringOption(option => option.setName('title').setDescription('Enter a title for the embed'))
-      .addBooleanOption(option => option.setName('del-trigger').setDescription('Delets the trigger message'))),
+      .addBooleanOption(option => option.setName('del-trigger').setDescription('Deletes the trigger message'))),
   async execute(client, interaction, prisma) {
 
     let noperm = new MessageEmbed()
