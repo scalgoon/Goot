@@ -60,7 +60,7 @@ module.exports = {
                     .setDescription(`Couldn't find that command in the database!`)
                     .setColor("RED")
 
-                interaction.reply({ embeds: [embed] })
+                interaction.reply({ embeds: [embed], ephemeral: true})
             }
 
         }
@@ -102,7 +102,7 @@ module.exports = {
                     .setDescription(`Couldn't find that command in the database!`)
                     .setColor("RED")
     
-                interaction.reply({ embeds: [embed] })
+                interaction.reply({ embeds: [embed],ephemeral: true })
             }
         } 
     },
