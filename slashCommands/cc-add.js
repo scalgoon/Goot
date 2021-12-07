@@ -53,7 +53,7 @@ module.exports = {
             .setDescription(`That command already exists!`)
             .setColor("RED")
 
-          interaction.reply({ embeds: [embed] })
+          interaction.reply({ embeds: [embed] , ephemeral: true })
         }
 
       } else {
@@ -65,7 +65,7 @@ module.exports = {
             .setFooter("Limit is 280 characters")
             .setColor("RED")
 
-          return interaction.reply({ embeds: [badembed] });
+          return interaction.reply({ embeds: [badembed], ephemeral: true  });
         }
 
         await prisma.cCommands.create({
@@ -119,7 +119,7 @@ module.exports = {
             .setDescription(`That command already exists!`)
             .setColor("RED")
 
-          interaction.reply({ embeds: [embed] })
+          interaction.reply({ embeds: [embed], ephemeral: true  })
         }
 
       } else {
@@ -131,7 +131,7 @@ module.exports = {
             .setFooter("Limit is 280 characters")
             .setColor("RED")
 
-          return interaction.reply({ embeds: [badembed] });
+          return interaction.reply({ embeds: [badembed], ephemeral: true  });
         }
 
         await prisma.cCEmbeds.create({
