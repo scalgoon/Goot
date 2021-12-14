@@ -5,10 +5,10 @@
 ![botlib](https://img.shields.io/badge/powered_by-discord.js-blue?style=for-the-badge)
 
 
-## Installing the modules
+## Installing the [npm modules](https://npmjs.com)
 
 ```sh
-npm install
+npm install <module name>
 ```
 
 ## Running the bot
@@ -22,13 +22,19 @@ DATABASE_URL=
 token=
 ```
 
-## Goot's prefix
+## How do I make a bot?
 
-Goot uses Discord slash commands however the custom command's prefix is:
+**Step 1:** Go to [Discord Developer Portal](https://discord.com/developers) and make a new application.
 
-```
-!<command>
-```
+![make app](https://github.com/scalgoon/Goot/blob/main/Images/Make-app.jpg?raw=true)
+
+**Step 2:** Turn that application into a Discord Bot
+
+![make bot](https://github.com/scalgoon/Goot/blob/main/Images/Build-bot.jpg?raw=true)
+
+**Step 3:** Copy and paste the Bot's token into your code editor. This will allow you to connect your code to the bot.
+
+![get token](https://github.com/scalgoon/Goot/blob/main/Images/Bot-token.jpg?raw=true)
 
 ## Open Source
 
