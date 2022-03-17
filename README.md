@@ -20,7 +20,7 @@ node .
 
 ## .env file
 ```json
-DATABASE_URL=
+databaseL=
 token=
 ```
 
