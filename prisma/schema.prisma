@@ -8,12 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model guild {
+model Guild {
   id         String @unique
   name       String
 }
 
-model commands {
+model Commands {
   placeholder String @unique @default("//k/")
   guild String
   text String?
@@ -21,10 +21,10 @@ model commands {
   description String?
   deltrig Boolean?
   permission String?
-  cmd String?
+  trigger String?
 }
 
-model custombot {
+model Custombot {
     id String @unique
     botname String
     botavatar String
