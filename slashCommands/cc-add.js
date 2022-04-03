@@ -19,14 +19,14 @@ module.exports = {
       .addStringOption(option => option.setName('description').setDescription('Enter description for the embed').setRequired(true))
       .addStringOption(option => option.setName('permissions').setDescription('Set the perms required to run the command').addChoice('User', 'user').addChoice('Staff', 'staff').addChoice('Admin', 'admin').setRequired(true))
       .addStringOption(option => option.setName('title').setDescription('Enter a title for the embed'))
-      .addBooleanOption(option => option.setName('del-trigger').setDescription('Deletes the trigger message'))),
+      .addBooleanOption(option => option.setName('del-trigger').setDescription('Delets the trigger message'))),
   async execute(client, interaction, prisma) {
 
     let noperm = new MessageEmbed()
       .setDescription(`<:cross:782029257739599873> You do not have permission to use this command!`)
       .setColor("RED")
 
-   if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) { return interaction.reply({ embeds: [noperm], ephemeral: true }) }
+    if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) { return interaction.reply({ embeds: [noperm], ephemeral: true }) }
 
     if (interaction.options.getSubcommand() === 'text') {
       const name = interaction.options.getString('name')
@@ -36,9 +36,9 @@ module.exports = {
 
       let triggertouse = `!${name}`
 
-      const exists = await prisma.cCommands.findUnique({
+      const exists = await prisma.commands.findUnique({
         where: {
-          placeholder: `${name + interaction.guild.id}`,
+          placeholder: `!${name + interaction.guild.id}`,
         },
         select: {
           guild: true
@@ -53,7 +53,7 @@ module.exports = {
             .setDescription(`That command already exists!`)
             .setColor("RED")
 
-          interaction.reply({ embeds: [embed] , ephemeral: true })
+          interaction.reply({ embeds: [embed], ephemeral: true })
         }
 
       } else {
@@ -65,18 +65,17 @@ module.exports = {
             .setFooter("Limit is 280 characters")
             .setColor("RED")
 
-          return interaction.reply({ embeds: [badembed], ephemeral: true  });
+          return interaction.reply({ embeds: [badembed], ephemeral: true });
         }
 
-        await prisma.cCommands.create({
+        await prisma.commands.create({
           data: {
-            placeholder: `${name + interaction.guild.id}`,
-            id: triggertouse,
+            placeholder: `!${name + interaction.guild.id}`,
             text: text,
             guild: interaction.guild.id,
             deltrig: deltrig,
             permission: perms,
-            name: name
+            trigger: triggertouse,
           },
         })
 
@@ -85,7 +84,11 @@ module.exports = {
           .setDescription(`<:check:782029189963710464> Successfully made command with trigger **${triggertouse}**`)
           .setColor("GREEN")
 
-        interaction.reply({ embeds: [embed] })
+        try {
+          await interaction.reply({ embeds: [embed] })
+        } catch (e) {
+          return;
+        }
       }
     }
 
@@ -102,9 +105,9 @@ module.exports = {
 
       let triggertouse = `!${name}`
 
-      const exists = await prisma.cCEmbeds.findUnique({
+      const exists = await prisma.commands.findUnique({
         where: {
-          placeholder: `${name + interaction.guild.id}`
+          placeholder: `!${name + interaction.guild.id}`
         },
         select: {
           guild: true
@@ -119,7 +122,7 @@ module.exports = {
             .setDescription(`That command already exists!`)
             .setColor("RED")
 
-          interaction.reply({ embeds: [embed], ephemeral: true  })
+          interaction.reply({ embeds: [embed], ephemeral: true })
         }
 
       } else {
@@ -131,18 +134,18 @@ module.exports = {
             .setFooter("Limit is 280 characters")
             .setColor("RED")
 
-          return interaction.reply({ embeds: [badembed], ephemeral: true  });
+          return interaction.reply({ embeds: [badembed], ephemeral: true });
         }
 
-        await prisma.cCEmbeds.create({
+        await prisma.commands.create({
           data: {
-            placeholder: `${name + interaction.guild.id}`,
-            id: triggertouse,
+            placeholder: `!${name + interaction.guild.id}`,
             description: description,
             guild: interaction.guild.id,
             title: title,
             deltrig: deltrig,
-            permission: perms
+            permission: perms,
+            trigger: triggertouse,
           },
         })
 
@@ -151,7 +154,11 @@ module.exports = {
           .setDescription(`<:check:782029189963710464> Successfully made command with trigger **${triggertouse}**`)
           .setColor("GREEN")
 
-        interaction.reply({ embeds: [embed] })
+        try {
+          await interaction.reply({ embeds: [embed] })
+        } catch (e) {
+          return;
+        }
       }
     }
   },
