@@ -1,0 +1,31 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  id         String @unique
+  name       String
+}
+
+model Commands {
+  placeholder String @unique @default("//k/")
+  guild String
+  text String?
+  title String?
+  description String?
+  deltrig Boolean?
+  permission String?
+  trigger String?
+}
+
+model Custombot {
+    id String @unique
+    botname String
+    botavatar String
+}
