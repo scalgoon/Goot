@@ -1,6 +1,6 @@
 {
   "name": "goot",
-  "version": "1.0.0", //Currently v1.3.9
+  "version": "2.0.0",
   "description": "The bot made by YOU",
   "main": "main.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "klaw": "^4.0.1",
     "moment": "^2.29.1",
     "path": "^0.12.7",
-    "quick.db": "^7.1.3", // Quick.db isn't actually used but added when project began
+    "quick.db": "^7.1.3",
     "util": "^0.12.4"
   },
   "devDependencies": {
@@ -28,4 +28,4 @@
   }
 }
 
-//Type script modules will be added soon...
+
