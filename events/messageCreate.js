@@ -18,34 +18,63 @@ module.exports = async (client, message) => {
 
     const args = message.content.slice(matchedPrefix.length).trim().split(/ +/g);
 
-    const textExists = await prisma.cCommands.findUnique({
+    const cmdExists = await prisma.commands.findUnique({
         where: {
-            placeholder: `${args[0] + message.guild.id}`
+            placeholder: `!${args[0] + message.guild.id}`
         },
         select: {
             text: true,
             guild: true,
             deltrig: true,
-            permission: true
+            permission: true,
+            title: true,
+            description: true,
         }
     })
 
-    if (textExists) {
+    if (cmdExists) {
 
-        if (textExists.guild === message.guild.id) {
+        if (cmdExists.guild === message.guild.id) {
 
-            if (textExists.permission === "staff") {
+            if (cmdExists.permission === "staff") {
                 if (!message.member.permissions.has("MANAGE_MESSAGES")) return;
             }
 
-            if (textExists.permission === "admin") {
+            if (cmdExists.permission === "admin") {
                 if (!message.member.permissions.has("ADMINISTRATOR")) return;
             }
+
+            const answers = [
+                'Maybe.',
+                'Certainly not.',
+                'I hope so.',
+                'Not in your wildest dreams.',
+                'There is a good chance.',
+                'Quite likely.',
+                'I think so.',
+                'I hope not.',
+                'I hope so.',
+                'Never!',
+                'Fuhgeddaboudit.',
+                'Ahaha! Really?!?',
+                'Pfft.',
+                'Sorry, bucko.',
+                'Hell, yes.',
+                'Hell to the no.',
+                'The future is bleak.',
+                'The future is uncertain.',
+                'I would rather not say.',
+                'Who cares?',
+                'Possibly.',
+                'Never, ever, ever.',
+                'There is a small chance.',
+                'Yes!'
+            ];
 
 
             let obj = {
                 $text: {
-                    value: args.splice(1).join(" ")
+                    value: args.splice(1).join(" ") || "Nothing inserted"
                 },
                 $userID: {
                     value: message.author.id
@@ -61,86 +90,117 @@ module.exports = async (client, message) => {
                 },
                 $nl: {
                     value: "\n"
+                },
+                $8ball: {
+                    value: answers[Math.floor(Math.random() * answers.length)]
                 }
             }
 
-            let newtext = textExists.text.replace("$text", obj.$text.value).replace("$userID", obj.$userID.value).replace("$serverID", obj.$serverID.value).replace("$user", obj.$user.value).replace("$channel", obj.$channel.value).replace("$nl", obj.$nl.value)
+            let newtext;
+            let newembed;
 
-
-            if (textExists.deltrig === true) {
-                message.delete();
-                message.channel.send(`${newtext}`);
-                return;
-            } else {
-                message.reply(`${newtext}`);
+            if (cmdExists.text) {
+                newtext = cmdExists.text.replace("$text", obj.$text.value).replace("$userID", obj.$userID.value).replace("$serverID", obj.$serverID.value).replace("$user", obj.$user.value).replace("$channel", obj.$channel.value).replace("$nl", obj.$nl.value).replace("$8ball", obj.$8ball.value)
+            } else if (cmdExists.description) {
+                newembed = cmdExists.description.replace("$text", obj.$text.value).replace("$userID", obj.$userID.value).replace("$serverID", obj.$serverID.value).replace("$user", obj.$user.value).replace("$channel", obj.$channel.value).replace("$nl", obj.$nl.value).replace("$8ball", obj.$8ball.value)
             }
 
-        }
-
-    }
-
-    const embedExists = await prisma.cCEmbeds.findUnique({
-        where: {
-            placeholder: `${args[0] + message.guild.id}`
-        },
-        select: {
-            description: true,
-            guild: true,
-            title: true,
-            deltrig: true,
-            permission: true
-        }
-    })
-
-    if (embedExists) {
-
-        if (embedExists.permission === "staff") {
-            if (!message.member.permissions.has("MANAGE_MESSAGES")) return;
-        }
-
-        if (embedExists.permission === "admin") {
-            if (!message.member.permissions.has("ADMINISTRATOR")) return;
-        }
-
-        const obj = {
-            $text: {
-                value: args.splice(1).join(" ")
-            },
-            $userID: {
-                value: message.author.id
-            },
-            $serverID: {
-                value: message.guild.id
-            },
-            $user: {
-                value: message.mentions.users.first() || ""
-            },
-            $channel: {
-                value: message.mentions.channels.first() || ""
-            },
-            $nl: {
-                value: "\n"
-            }
-        }
-
-        let newtext = embedExists.description.replace("$text", obj.$text.value).replace("$userID", obj.$userID.value).replace("$serverID", obj.$serverID.value).replace("$user", obj.$user.value).replace("$channel", obj.$channel.value).replace("$nl", obj.$nl.value)
-
-
-        if (embedExists.guild === message.guild.id) {
-            let embed = new MessageEmbed()
-                .setDescription(`${newtext}`)
+            let toembed = new MessageEmbed()
+                .setDescription(`${newembed}`)
                 .setColor("RANDOM")
 
-            if (embedExists.title) {
-                embed.setTitle(`${embedExists.title}`)
+            if (cmdExists.title) {
+                toembed.setTitle(`${cmdExists.title}`)
             }
 
-            if (embedExists.deltrig === true) {
-                message.delete();
-                message.channel.send({ embeds: [embed] });
-                return;
+            const cusbot = await prisma.custombot.findUnique({
+                where: {
+                    id: message.guild.id,
+                },
+                select: {
+                    botname: true,
+                    botavatar: true,
+                }
+            })
+
+            if (cusbot) {
+
+                const hooks = await message.channel.fetchWebhooks()
+                const hook = hooks.find(webj => webj.name === cusbot.botname)
+
+                if (!hook) {
+                    let newhook = await message.channel.createWebhook(cusbot.botname, {
+                        avatar: cusbot.botavatar,
+                        reason: "Required for Goot's custom bot feature"
+                    })
+
+                    if (cmdExists.deltrig === true) {
+                        if (cmdExists.text) {
+                            message.delete();
+                            newhook.send(`${newtext}`);
+                        }
+
+                        if (cmdExists.description) {
+                            message.delete();
+                            newhook.send({ embeds: [toembed] });
+                        }
+                        return;
+                    } else {
+                        if (cmdExists.text) {
+                            newhook.send(`${newtext}`);
+                        }
+
+                        if (cmdExists.description) {
+                            newhook.send({ embeds: [toembed] });
+                        }
+                    }
+
+                } else {
+                    if (cmdExists.deltrig === true) {
+                        if (cmdExists.text) {
+                            message.delete();
+                            hook.send(`${newtext}`);
+                        }
+
+                        if (cmdExists.description) {
+                            message.delete();
+                            hook.send({ embeds: [toembed] });
+                        }
+                        return;
+                    } else {
+                        if (cmdExists.text) {
+                            hook.send(`${newtext}`);
+                        }
+
+                        if (cmdExists.description) {
+                            hook.send({ embeds: [toembed] });
+                        }
+                    }
+                }
+
             } else {
-                message.reply({ embeds: [embed] });
+
+                if (cmdExists.deltrig === true) {
+                    if (cmdExists.text) {
+                        message.delete();
+                        message.channel.send(`${newtext}`);
+                    }
+
+                    if (cmdExists.description) {
+                        message.delete();
+                        message.channel.send({ embeds: [toembed] });
+                    }
+                    return;
+                } else {
+                    if (cmdExists.text) {
+                        message.channel.send(`${newtext}`);
+                    }
+
+                    if (cmdExists.description) {
+                        message.channel.send({ embeds: [toembed] });
+                    }
+                }
+
             }
 
         }
