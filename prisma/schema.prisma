@@ -21,7 +21,7 @@ model Commands {
   description String?
   deltrig Boolean?
   permission String?
-  trigger String?
+  cmd String?
 }
 
 model Custombot {
