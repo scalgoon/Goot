@@ -3,7 +3,7 @@
 <h1>Goot! The bot made by you.</h1>
 
 
-![Version](https://img.shields.io/badge/version-1.3.9-green.svg?cacheSeconds=2592000&style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0.0-green.svg?cacheSeconds=2592000&style=for-the-badge)
 ![botlib](https://img.shields.io/badge/powered_by-discord.js-blue?style=for-the-badge)
 
 
