@@ -22,5 +22,4 @@ module.exports = (client) => {
 
         console.log(`[${moment().format('D/M/Y HH:mm:ss.SSS').bold.blue}] [${type.green}] [${title.yellow}] ${msg}`);
     };
-};
 }
