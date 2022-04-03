@@ -75,7 +75,7 @@ module.exports = {
             guild: interaction.guild.id,
             deltrig: deltrig,
             permission: perms,
-            trigger: triggertouse,
+            cmd: triggertouse,
           },
         })
 
@@ -145,7 +145,7 @@ module.exports = {
             title: title,
             deltrig: deltrig,
             permission: perms,
-            trigger: triggertouse,
+            cmd: triggertouse,
           },
         })
 
