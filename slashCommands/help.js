@@ -19,7 +19,7 @@ module.exports = {
                 text: true,
                 description: true,
                 title: true,
-                cmd: true,
+                trigger: true,
             }
         })
 
@@ -64,7 +64,7 @@ module.exports = {
             }
         }
 
-        let cmds = textExists.map((x) => `\`${x.cmd}\``).join(", ")
+        let cmds = textExists.map((x) => `\`${x.trigger}\``).join(", ")
 
         let embed = new MessageEmbed()
             .setTitle("Help Embed")
