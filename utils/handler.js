@@ -4,6 +4,7 @@ const { promisify } = require("util");
 const readdir = promisify(require('fs').readdir);
 const { glob } = require("glob");
 const globPromise = promisify(glob);
+const fs = require('fs');
 
 module.exports = async (client) => {
     const evtFiles = await readdir('./events')
@@ -15,34 +16,5 @@ module.exports = async (client) => {
         client.on(evtFile.name, event.bind(null, client));
         client.log('EVENT BIND', `Event ${evtFile.name.green} was linked to file ${(evtFile.name + evtFile.ext).green}`)
     });
-
-    const commands = [];
-    const slashCommandFiles = fs.readdirSync('../slashCommands').filter(file => file.endsWith('.js'));
-
-    const clientId = '784903173767823370';
-
-    // const guildid = '804846257729175623'
-
-    for (const file of slashCommandFiles) {
-        const command = require(`./slashCommands/${file}`);
-        commands.push(command.data.toJSON());
-    }
-
-    const rest = new REST({ version: '9' }).setToken(process.env.token);
-
-    (async () => {
-        try {
-            console.log(`> Started refreshing application (/) commands.`)
-
-            await rest.put(
-                Routes.applicationCommands(clientId),
-                { body: commands },
-            );
-
-            console.log(`> Successfully reloaded application (/) commands.`)
-        } catch (error) {
-            console.error(error);
-        }
-    })();
 
 }
