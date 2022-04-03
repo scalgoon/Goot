@@ -1,7 +1,6 @@
 const { table } = require('table');
 const { promisify } = require("util");
 const readdir = promisify(require('fs').readdir);
-const mongoose = require('mongoose');
 
 require('colors');
 require('dotenv').config();
@@ -21,13 +20,5 @@ module.exports = async (client) => {
             type: "WATCHING",
         }],
     });
-    
-    //In your .env file you will replace "DATABASE_URL" with "database" and there place your mongo connection string.
-
-    await mongoose.connect(process.env.database || '', {
-        keepAlive: true
-    });
-
-    client.log("Mongo", "Database connected successfully");
 
 }
