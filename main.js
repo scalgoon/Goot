@@ -1,33 +1,27 @@
-const { Collection, Discord, Client } = require('discord.js');
+const { Collection, Discord, Client, GatewayIntentBits, Partials } = require('discord.js');
 
 require('dotenv').config()
 
 const client = new Client({
     intents: [
-        'GUILDS',
-        'GUILD_MEMBERS',
-        'GUILD_MESSAGES',
-        'GUILD_MESSAGE_REACTIONS',
-        'GUILD_MESSAGE_TYPING',
-        'GUILD_BANS',
-        'GUILD_EMOJIS_AND_STICKERS',
-        'GUILD_INTEGRATIONS',
-        'GUILD_INVITES',
-        'GUILD_VOICE_STATES',
-        'GUILD_PRESENCES',
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildEmojisAndStickers,
+        GatewayIntentBits.GuildIntegrations,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildPresences
+
     ],
-    allowedMentions: ["roles", "users"],
-    partials: ['USER', 'CHANNEL', 'GUILD_MEMBER', 'MESSAGE', 'REACTION']
+    partials: [Partials.User, Partials.Channel, Partials.GuildMember, Partials.Message, Partials.Reaction]
 });
 
 const fs = require('fs');
-// const config = require('./config.json');
-// const klaw = require('klaw');
 const path = require('path');
-//const { SlashCommandBuilder } = require('@discordjs/builders');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { MessageEmbed } = require('discord.js');
 
 
 client.commands = new Collection();
@@ -49,8 +43,6 @@ const commands = [];
 const slashCommandFiles = fs.readdirSync('./slashCommands').filter(file => file.endsWith('.js'));
 
 const clientId = '784903173767823370';
-
-const guildid = '804846257729175623'
 
 for (const file of slashCommandFiles) {
     const command = require(`./slashCommands/${file}`);
