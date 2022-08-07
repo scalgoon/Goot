@@ -1,44 +1,101 @@
 const { SlashCommandBuilder } = require('discord.js');
-
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const db = require('quick.db');
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('ping')
-		.setDescription('Sends the bot\'s ping and latency'),
-	async execute(client, interaction) {
-		let ping = new EmbedBuilder()
-        .setTitle(`Calculating ping...`)
-    
-        const startTime = Date.now();
-        interaction.reply({ embeds: [ping] })
-        .then(msg => {
-            const endTime = Date.now();
-            var pong = endTime-startTime;
+    data: new SlashCommandBuilder()
+        .setName('setup')
+        .setDescription('Removes a custom command')
+        // .addSubcommand(subcommand => subcommand.setName('custom-bot').setDescription('Setup the custom bot feature').addStringOption(option => option.setName('name').setDescription('Set the bots name').setRequired(true)).addStringOption(option => option.setName('avatar').setDescription('Provide a link for the avatar').setRequired(true)))
+        .addSubcommand(subcommand => subcommand.setName('remove').setDescription('Remove a event').addStringOption(option => option.setName('event').setDescription('Select a event').addChoices({ name: 'Custom Bot', value: 'cbot' }).setRequired(true))),
+    async execute(client, interaction) {
 
-            let apipong = Math.round(client.ws.ping);
+        let noperm = new EmbedBuilder()
+            .setDescription(`<:cross:782029257739599873> You do not have permission to use this command!`)
+            .setColor("Red")
 
-            let emoj;
+        if (!interaction.member.permissions.has(PermissionsBitField.Flags.Manage_Guild)) {
+            return interaction.reply({ embeds: [noperm], ephemeral: true })
+        }
 
-            let colo;
+        // if (interaction.options.getSubcommand() === "custom-bot") {
 
-            if (apipong < 60) {
-              emoj = "<:3bar:908545977177214977>"
-              colo = "Green"
-            } else if (apipong > 60 && apipong < 100) {
-              emoj = "<:2bar:908546068038422628>"
-              colo = "Orange"
-            } else {
-              emoj = "<:1bar:908546024115695656>"
-              colo = "Red"
+        //     let exists = db.fetch(`custombot-${interaction.guild.id}`);
+
+        //     if (exists) {
+        //         let embed = new EmbedBuilder()
+        //             .setTitle("Command Error")
+        //             .setDescription(`The custom bot is already setup!`)
+        //             .setColor("Red")
+
+        //         interaction.reply({ embeds: [embed], ephemeral: true })
+        //     }
+
+        //     const name = interaction.options.getString('name')
+        //     const avatars = interaction.options.getString('avatar')
+
+        //     if (name?.length >= 15 || avatars?.length >= 280) {
+        //         let badembed = new EmbedBuilder()
+        //             .setTitle("Command Error")
+        //             .setDescription(`The text provided is too long!`)
+        //             .setColor("Red")
+
+        //         return interaction.reply({ embeds: [badembed], ephemeral: true });
+        //     }
+
+        //     await db.set(`custombot-${interaction.guild.id}`, { botname: name, botavatar: avatars });
+
+        //     let embed = new EmbedBuilder()
+        //         .setTitle("Event Added")
+        //         .setDescription(`<:check:782029189963710464> Successfully added the custom bot **${name}** to this server`)
+        //         .setColor("Green")
+
+        //     try {
+        //         await interaction.reply({ embeds: [embed] })
+        //     } catch (e) {
+        //         return;
+        //     }
+        // }
+
+        if (interaction.options.getSubcommand() === "remove") {
+
+            //     const choice = interaction.options.getString('event')
+
+            //     if(choice === "cbot") {
+
+            //         let exists = db.fetch(`custombot-${interaction.guild.id}`);
+
+            //         if (!exists) {
+            //             let embed = new EmbedBuilder()
+            //                 .setTitle("Command Error")
+            //                 .setDescription(`The custom bot is already removed!`)
+            //                 .setColor("Red")
+
+            //             interaction.reply({ embeds: [embed], ephemeral: true })
+            //         }
+
+            //         await db.delete(`custombot-${interaction.guild.id}`);
+
+            //         let embed = new EmbedBuilder()
+            //             .setTitle("Event Removed")
+            //             .setDescription(`<:check:782029189963710464> Successfully deleted the custom bot from this server`)
+            //             .setColor("Green")
+
+            //         try {
+            //             await interaction.reply({ embeds: [embed] })
+            //         } catch (e) {
+            //             return;
+            //         }
+
+            //     }
+
+            try {
+                await interaction.reply({ content: "There are no events to remove at this moment.", ephemeral: true });
+            } catch (e) {
+                return;
             }
-    
-                let ping2 = new EmbedBuilder()
-                .setTitle(`${emoj} Pong!`)
-                .setColor(colo)
-                .setDescription(`Latency: ${pong} ms \nApi Latency: ${apipong} ms` )
-    
-                interaction.editReply({ embeds: [ping2] });
-		});
-	},
+
+        }
+
+    },
 };
