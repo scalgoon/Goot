@@ -7,16 +7,16 @@ require('dotenv').config();
 
 module.exports = async (client) => {
     
-    let on = "Online"
+    let on = "Idle"
 
     const evtFiles = await readdir('./events')
     
-    console.log(`${table([[`${client.user.username} is ready!`,`Status: ${on.green} | Servers: ${client.guilds.cache.size.toString().yellow} | Events: ${evtFiles.length.toString().yellow} | Commands: ${client.commands.size.toString().yellow}`]])}`);
+    console.log(`${table([[`${client.user.username} is ready!`,`Status: ${on.yellow} | Servers: ${client.guilds.cache.size.toString().yellow} | Events: ${evtFiles.length.toString().yellow} | Commands: ${client.commands.size.toString().yellow}`]])}`);
 
     client.user.setPresence({
         status: 'idle',
         activities: [{
-            name: `myself be made 👀`,
+            name: ` My commands be made <3`,
             type: "WATCHING",
         }],
     });
