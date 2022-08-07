@@ -1,5 +1,6 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed, Permissions } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const db = require('quick.db');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -10,23 +11,23 @@ module.exports = {
       .setDescription('Text for the custom command')
       .addStringOption(option => option.setName('name').setDescription('Enter a name for the command').setRequired(true))
       .addStringOption(option => option.setName('text').setDescription('Enter text for the bot to say').setRequired(true))
-      .addStringOption(option => option.setName('permissions').setDescription('Set the perms required to run the command').addChoice('User', 'user').addChoice('Staff', 'staff').addChoice('Admin', 'admin').setRequired(true))
+      .addStringOption(option => option.setName('permissions').setDescription('Set the perms required to run the command').addChoices({ name: 'User', value: 'user' }, { name: 'Staff', value: 'staff' }, { name: 'Admin', value: 'admin' }).setRequired(true))
       .addBooleanOption(option => option.setName('del-trigger').setDescription('Delets the trigger message')))
     .addSubcommand(subcommand => subcommand
       .setName('embed')
       .setDescription('Embed for the custom command')
       .addStringOption(option => option.setName('name').setDescription('Enter a name for the command').setRequired(true))
       .addStringOption(option => option.setName('description').setDescription('Enter description for the embed').setRequired(true))
-      .addStringOption(option => option.setName('permissions').setDescription('Set the perms required to run the command').addChoice('User', 'user').addChoice('Staff', 'staff').addChoice('Admin', 'admin').setRequired(true))
+      .addStringOption(option => option.setName('permissions').setDescription('Set the perms required to run the command').addChoices({ name: 'User', value: 'user' }, { name: 'Staff', value: 'staff' }, { name: 'Admin', value: 'admin' }).setRequired(true))
       .addStringOption(option => option.setName('title').setDescription('Enter a title for the embed'))
       .addBooleanOption(option => option.setName('del-trigger').setDescription('Delets the trigger message'))),
-  async execute(client, interaction, prisma) {
+  async execute(client, interaction) {
 
-    let noperm = new MessageEmbed()
+    let noperm = new EmbedBuilder()
       .setDescription(`<:cross:782029257739599873> You do not have permission to use this command!`)
-      .setColor("RED")
+      .setColor("Red")
 
-    if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) { return interaction.reply({ embeds: [noperm], ephemeral: true }) }
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.Manage_Guild)) { return interaction.reply({ embeds: [noperm], ephemeral: true }) }
 
     if (interaction.options.getSubcommand() === 'text') {
       const name = interaction.options.getString('name')
@@ -34,24 +35,15 @@ module.exports = {
       const deltrig = interaction.options.getBoolean('del-trigger')
       const perms = interaction.options.getString('permissions')
 
-      let triggertouse = `!${name}`
-
-      const exists = await prisma.commands.findUnique({
-        where: {
-          placeholder: `!${name + interaction.guild.id}`,
-        },
-        select: {
-          guild: true
-        }
-      })
+      let exists = db.fetch(`!${name}-${interaction.guild.id}`);
 
       if (exists) {
 
         if (exists.guild === interaction.guild.id) {
-          let embed = new MessageEmbed()
+          let embed = new EmbedBuilder()
             .setTitle("Command Error")
             .setDescription(`That command already exists!`)
-            .setColor("RED")
+            .setColor("Red")
 
           interaction.reply({ embeds: [embed], ephemeral: true })
         }
@@ -59,30 +51,23 @@ module.exports = {
       } else {
 
         if (text?.length >= 280 || name?.length >= 9) {
-          let badembed = new MessageEmbed()
+          let badembed = new EmbedBuilder()
             .setTitle("Command Error")
             .setDescription(`The text provided is too long!`)
-            .setFooter("Limit is 280 characters")
-            .setColor("RED")
+            .setFooter({ text: "Limit is 280 characters" })
+            .setColor("Red")
 
           return interaction.reply({ embeds: [badembed], ephemeral: true });
         }
 
-        await prisma.commands.create({
-          data: {
-            placeholder: `!${name + interaction.guild.id}`,
-            text: text,
-            guild: interaction.guild.id,
-            deltrig: deltrig,
-            permission: perms,
-            trigger: triggertouse,
-          },
-        })
+        await db.set(`!${name}-${interaction.guild.id}`, { name: name, text: text, deltrig: deltrig, perms: perms, guild: interaction.guild.id });
 
-        let embed = new MessageEmbed()
+        await db.push(`helpcmd-${interaction.guild.id}`, name);
+
+        let embed = new EmbedBuilder()
           .setTitle("Command Made")
-          .setDescription(`<:check:782029189963710464> Successfully made command with trigger **${triggertouse}**`)
-          .setColor("GREEN")
+          .setDescription(`<:check:782029189963710464> Successfully made command with trigger **!${name}**`)
+          .setColor("Green")
 
         try {
           await interaction.reply({ embeds: [embed] })
@@ -103,24 +88,15 @@ module.exports = {
         title = null
       }
 
-      let triggertouse = `!${name}`
-
-      const exists = await prisma.commands.findUnique({
-        where: {
-          placeholder: `!${name + interaction.guild.id}`
-        },
-        select: {
-          guild: true
-        }
-      })
+      let exists = db.fetch(`!${name}-${interaction.guild.id}`);
 
       if (exists) {
 
         if (exists.guild === interaction.guild.id) {
-          let embed = new MessageEmbed()
+          let embed = new EmbedBuilder()
             .setTitle("Command Error")
             .setDescription(`That command already exists!`)
-            .setColor("RED")
+            .setColor("Red")
 
           interaction.reply({ embeds: [embed], ephemeral: true })
         }
@@ -128,31 +104,23 @@ module.exports = {
       } else {
 
         if (description?.length >= 280 || name?.length >= 9 || title?.length >= 30) {
-          let badembed = new MessageEmbed()
+          let badembed = new EmbedBuilder()
             .setTitle("Command Error")
             .setDescription(`The text provided is too long!`)
-            .setFooter("Limit is 280 characters")
-            .setColor("RED")
+            .setFooter({ text: "Limit is 280 characters" })
+            .setColor("Red")
 
           return interaction.reply({ embeds: [badembed], ephemeral: true });
         }
 
-        await prisma.commands.create({
-          data: {
-            placeholder: `!${name + interaction.guild.id}`,
-            description: description,
-            guild: interaction.guild.id,
-            title: title,
-            deltrig: deltrig,
-            permission: perms,
-            trigger: triggertouse,
-          },
-        })
+        await db.set(`!${name}-${interaction.guild.id}`, { name: name, title: title, description: description, deltrig: deltrig, perms: perms, guild: interaction.guild.id });
 
-        let embed = new MessageEmbed()
+        await db.push(`helpcmd-${interaction.guild.id}`, name);
+
+        let embed = new EmbedBuilder()
           .setTitle("Command Made")
-          .setDescription(`<:check:782029189963710464> Successfully made command with trigger **${triggertouse}**`)
-          .setColor("GREEN")
+          .setDescription(`<:check:782029189963710464> Successfully made command with trigger **!${name}**`)
+          .setColor("Green")
 
         try {
           await interaction.reply({ embeds: [embed] })
