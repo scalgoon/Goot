@@ -16,7 +16,7 @@ module.exports = {
         .addFields(
           { name: "Info", value: `\`\`\`yml\nName: ${client.user.tag}\nID: ${client.user.id}\n\`\`\``, inline: true },
           { name: "Creator", value: `\`\`\`yml\nName: Goose_#2548\nID: 734784924619505774\n\`\`\``, inline: true },
-          { name: "Version", value: "```yml\nv2.0.0 [BETA]\n```", inline: true },
+          { name: "Version", value: "```yml\nv2.0.0\n```", inline: true },
           { name: "Guilds", value: `\`\`\`yml\n${client.guilds.cache.size}\n\`\`\``, inline: true },
           { name: "Uptime", value: `\`\`\`yml\n${days}d, ${hours}h, ${minutes}m, ${seconds}s\n\`\`\``},
           { name: "Github", value: "[Click here](https://github.com/scalgoon/Goot)"},
