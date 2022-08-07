@@ -20,23 +20,9 @@ node .
 
 ## .env file
 ```json
-databaseL=
 token=
 ```
 
-## How do I make a bot?
-
-**Step 1:** Go to [Discord Developer Portal](https://discord.com/developers) and make a new application.
-
-![make app](https://github.com/scalgoon/Goot/blob/main/Images/Make-app.jpg?raw=true)
-
-**Step 2:** Turn that application into a Discord Bot
-
-![make bot](https://github.com/scalgoon/Goot/blob/main/Images/Build-bot.jpg?raw=true)
-
-**Step 3:** Copy and paste the Bot's token into your code editor. This will allow you to connect your code to the bot.
-
-![get token](https://github.com/scalgoon/Goot/blob/main/Images/Bot-token.jpg?raw=true)
 
 ## Open Source
 
