@@ -7,7 +7,7 @@ module.exports = {
         .setName('setup')
         .setDescription('Removes a custom command')
         .addSubcommand(subcommand => subcommand.setName('custom-bot').setDescription('Setup the custom bot feature').addStringOption(option => option.setName('name').setDescription('Set the bots name').setRequired(true)).addStringOption(option => option.setName('avatar').setDescription('Provide a link for the avatar').setRequired(true)))
-        .addSubcommand(subcommand => subcommand.setName('remove').setDescription('Remove a event').addStringOption(option => option.setName('event').setDescription('Select a event').addChoice('Custom Bot', 'cbot').setRequired(true))),
+        .addSubcommand(subcommand => subcommand.setName('remove').setDescription('Remove a event').addStringOption(option => option.setName('event').setDescription('Select a event').addChoice({ name: 'Custom Bot', value: 'cbot' }).setRequired(true))),
     async execute(client, interaction, prisma) {
 
         let noperm = new MessageEmbed()
