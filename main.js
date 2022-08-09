@@ -1,4 +1,4 @@
-const { Collection, Discord, Client, GatewayIntentBits, Partials } = require('discord.js');
+const { Collection, Discord, Client, GatewayIntentBits, Partials, ActivityType } = require('discord.js');
 
 require('dotenv').config()
 
@@ -15,7 +15,13 @@ const client = new Client({
         GatewayIntentBits.GuildPresences
 
     ],
-    partials: [Partials.User, Partials.Channel, Partials.GuildMember, Partials.Message, Partials.Reaction]
+    partials: [Partials.User, Partials.Channel, Partials.GuildMember, Partials.Message, Partials.Reaction],
+    presence: {
+        activities: [{
+            name: `My commands be made <3`,
+            type: ActivityType.Watching
+        }]
+    }
 });
 
 const fs = require('fs');

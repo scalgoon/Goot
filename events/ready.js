@@ -13,12 +13,5 @@ module.exports = async (client) => {
     
     console.log(`${table([[`${client.user.username} is ready!`,`Status: ${on.yellow} | Servers: ${client.guilds.cache.size.toString().yellow} | Events: ${evtFiles.length.toString().yellow} | Commands: ${client.commands.size.toString().yellow}`]])}`);
 
-    client.user.setPresence({
-        status: 'idle',
-        activities: [{
-            name: ` My commands be made <3`,
-            type: "WATCHING",
-        }],
-    });
 
 }
