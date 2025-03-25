@@ -1,13 +1,11 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-
-const { MessageEmbed } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
-		.setDescription('Sends the bot\'s ping and latency'),
+		.setDescription('Sends the bot\'s ping and latency.'),
 	async execute(client, interaction) {
-		let ping = new MessageEmbed()
+		let ping = new EmbedBuilder()
         .setTitle(`Calculating ping...`)
     
         const startTime = Date.now();
@@ -24,21 +22,27 @@ module.exports = {
 
             if (apipong < 60) {
               emoj = "<:3bar:908545977177214977>"
-              colo = "GREEN"
+              colo = "Green"
             } else if (apipong > 60 && apipong < 100) {
               emoj = "<:2bar:908546068038422628>"
-              colo = "ORANGE"
+              colo = "Orange"
             } else {
               emoj = "<:1bar:908546024115695656>"
-              colo = "RED"
+              colo = "Red"
             }
     
-                let ping = new MessageEmbed()
+                let ping2 = new EmbedBuilder()
                 .setTitle(`${emoj} Pong!`)
                 .setColor(colo)
                 .setDescription(`Latency: ${pong} ms \nApi Latency: ${apipong} ms` )
     
-                interaction.editReply({ embeds: [ping] });
+                interaction.editReply({ embeds: [ping2] });
 		});
 	},
 };
+
+module.exports.config = {
+  name: "ping",
+  usage: "**/ping**",
+  description: "Sends the bot\'s ping and latency."
+}

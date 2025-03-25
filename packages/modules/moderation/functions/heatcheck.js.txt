@@ -1,0 +1,124 @@
+const prisma = require('../utils/prismaClient.js');
+
+const BanMember = require('./ban');
+
+const TimeoutMember = require('./timeout');
+
+const WarnMember = require('./warn');
+
+class HeatCheck {
+    constructor(userID, client, interaction) {
+        this.userID = userID;
+        this.client = client;
+        this.interaction = interaction;
+    }
+
+    async check() {
+
+        let userheat = await prisma.user.findUnique({
+            where: {
+                id: this.userID
+            },
+            select: {
+                heat: true
+            }
+        })
+
+        const between = (x, min, max) => {
+            return x >= min && x <= max;
+        };
+        
+        const x = userheat.heat;
+
+        if (x < 5) {
+
+            return null;
+
+        }
+
+        if (between(x, 5, 7)) {
+
+            let memtowarn = new WarnMember(this.interaction.guild.id, this.userID, `Autowarn: Heat Level ${x}`, this.client, this.client);
+
+            await memtowarn.warn();
+
+            return `Heat Level ${x} | Warning Given`;
+
+        }
+
+        if (between(x, 11, 14)) {
+
+            let memtomute30 = new TimeoutMember(this.interaction.guild.id, this.userID, `Automute: Heat Level ${x}`, '1800000', this.client, this.client);
+
+            await memtomute30.mute();
+
+            return `Heat Level ${x} | 30m Automute Given`;
+
+        }
+
+        if (between(x, 18, 22)) {
+
+            let memtomute3h = new TimeoutMember(this.interaction.guild.id, this.userID, `Automute: Heat Level ${x}`, '10800000', this.client, this.client);
+
+            await memtomute3h.timeout();
+
+            return `Heat Level ${x} | 3h Automute Given`;
+
+        }
+
+        if (between(x, 24, 28)) {
+
+            let memtomute1d = new TimeoutMember(this.interaction.guild.id, this.userID, `Automute: Heat Level ${x}`, '86400000', this.client, this.client);
+
+            await memtomute1d.timeout();
+
+            return `Heat Level ${x} | 1d Automute Given`;
+
+        }
+
+        if (x > 34) {
+
+            let memtoban = new BanMember(this.interaction.guild.id, this.userID, `Autoban: Heat Level ${x}`, this.client, this.client);
+
+            await memtoban.ban();
+
+            return `Heat Level ${x} | Autoban Given`;
+
+        }
+
+        setInterval(async () => {
+
+            let userheat = await prisma.user.findUnique({
+                where: {
+                    id: this.userID
+                },
+                select: {
+                    heat: true
+                }
+            })
+    
+            let minHeat = parseInt(userheat.heat) - parseInt(10);
+
+            let finalHeat;
+
+            if (minHeat < 0 ) {
+                finalHeat = parseInt(0)
+            } else {
+                finalHeat = minHeat
+            }
+            
+            const updateHeat = await prisma.user.update({
+                where: {
+                    id: this.userID
+                },
+                data: {
+                    heat: `${finalHeat}`
+                }
+            })
+
+        }, 86400000);
+
+    }
+}
+
+module.exports = HeatCheck;

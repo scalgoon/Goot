@@ -1,0 +1,113 @@
+const prisma = require('../utils/prismaClient.js');
+
+const { EmbedBuilder } = require('discord.js');
+
+const ShortUniqueId = require('short-unique-id');
+
+class BanMember {
+    constructor(guild, userID, banReason, client, staff) {
+        this.guild = guild;
+        this.userID = userID;
+        this.banReason = banReason;
+        this.client = client;
+        this.staff = staff;
+    }
+
+    async ban() {
+
+        const uid = new ShortUniqueId();
+
+        let lid = uid.rnd();
+
+        const banLog = await prisma.userModLog.create({
+            data: {
+                userid: `${this.userID}`,
+                logid: `${lid}`,
+                staff: `${this.staff.user.username}`,
+                action: `Ban`,
+                reason: `${this.banReason}`,
+                heatlvl: `10`
+            }
+        })
+
+        let userheat = await prisma.user.findUnique({
+            where: {
+                id: this.userID
+            },
+            select: {
+                heat: true
+            }
+        })
+
+        let newHeat = parseInt(userheat.heat) + parseInt(10);
+
+        const finalHeat = await prisma.user.update({
+            where: {
+                id: this.userID
+            },
+            data: {
+                heat: `${newHeat}`
+            }
+        })
+
+        let modlog = await prisma.guild.findUnique({
+            where: {
+                id: this.guild
+            },
+            select: {
+                log_chnl: true
+            }
+        })
+
+        const banGuild = await this.client.guilds.fetch(this.guild);
+
+        let banMem = banGuild.members.cache.find(member => member.id === this.userID);
+
+        await banMem.ban({ reason: this.banReason });
+
+        let logbed = new EmbedBuilder()
+            .setTitle(`Member Banned | LID: ${lid}`)
+            .addFields({ name: `Member Affected`, value: `<@${this.userID}>` })
+            .addFields({ name: `Given By`, value: `<@${this.staff.user.id}>` })
+            .addFields({ name: `Ban Reason`, value: `${this.banReason}` })
+            .setColor("Red")
+            .setFooter({ text: `Heat: +10 (${newHeat})` })
+
+        let logmsg = await this.client.channels.cache.get(modlog.log_chnl).send({ embeds: [logbed] });
+
+        return lid;
+    }
+
+    async unban() {
+
+        let modlog = await prisma.guild.findUnique({
+            where: {
+                id: this.guild
+            },
+            select: {
+                log_chnl: true
+            }
+        })
+
+        let logbed = new EmbedBuilder()
+            .setTitle(`Member Unbanned`)
+            .addFields({ name: `Member Affected`, value: `<@${this.userID}>` })
+            .addFields({ name: `Given By`, value: `<@${this.staff.user.id}>` })
+            .addFields({ name: `Unban Reason`, value: `${this.banReason}` })
+            .setColor("Green")
+
+        let logmsg = await this.client.channels.cache.get(modlog.log_chnl).send({ embeds: [logbed] });
+
+        const banGuild = await this.client.guilds.fetch(this.guild);
+
+        let bans = await banGuild.bans.fetch(this.userID);
+
+        let bannedUser = await bans.user.fetch();
+
+        await banGuild.members.unban(bannedUser, this.banReason);
+
+        return;
+    }
+}
+
+module.exports = BanMember;
