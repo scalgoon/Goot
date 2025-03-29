@@ -43,6 +43,8 @@ node_modules/
 jspm_packages/
 old/
 package-lock.json
+prisma/migrations
+json.sqlite
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

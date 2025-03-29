@@ -54,7 +54,7 @@ class GuildCommands {
 
                 let details = {
                     title: "Error Loading Package",
-                    desc: `<:cross:782029257739599873> ${error}`,
+                    desc: `<:fail:1355336960729682021> ${error}`,
                     color: "Red"
                 }
         
@@ -64,7 +64,7 @@ class GuildCommands {
 
         let details = {
             title: "Package Manager",
-            desc: `<:check:782029189963710464> Successfully loaded the **${this.cmd}** package`,
+            desc: `<:pass:1355337017357238464> Successfully loaded the **${this.cmd}** package`,
             color: "Green"
         }
 
@@ -113,7 +113,7 @@ class GuildCommands {
 
                 let details = {
                     title: "Error Removing Package",
-                    desc: `<:cross:782029257739599873> ${error}`,
+                    desc: `<:fail:1355336960729682021> ${error}`,
                     color: "Red"
                 }
         
@@ -123,7 +123,7 @@ class GuildCommands {
 
         let details = {
             title: "Package Manager",
-            desc: `<:check:782029189963710464> Successfully removed the **${this.cmd}** package`,
+            desc: `<:pass:1355337017357238464> Successfully removed the **${this.cmd}** package`,
             color: "Green"
         }
 

@@ -15,4 +15,4 @@ module.exports.config = {
     description: "Sends the bot\'s ping and latency"
 }
 
-// emojis: <:check:782029189963710464> <:cross:782029257739599873>
+// emojis: <:pass:1355337017357238464> <:fail:1355336960729682021>

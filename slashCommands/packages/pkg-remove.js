@@ -2,6 +2,9 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, InteractionConte
 
 const GuildCommands = require("../../packages/cmdHandler");
 
+const { QuickDB } = require("quick.db");
+const db = new QuickDB();
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('pkg-remove')
@@ -20,16 +23,48 @@ module.exports = {
 
 		const choicePackage = interaction.options.getString('package');
 
-		const package = new GuildCommands(`${interaction.guild.id}`, `${choicePackage}`);
+		let hasPackageInstalled = await db.get(`InstalledPackages_${interaction.guild.id}`);
 
-		const module = await package.unload();
+		if (hasPackageInstalled.length > 0) {
+			checkForChoice();
+		} else {
+			const noPackagesInstalled = new EmbedBuilder()
+				.setTitle("Package Manager")
+				.setDescription("<:fail:1355336960729682021> You have no packages installed to your guild")
+				.setColor("Red")
 
-		const finished = new EmbedBuilder()
-			.setTitle(module.title)
-			.setDescription(module.desc)
-			.setColor(module.color)
+			return await interaction.reply({ embeds: [noPackagesInstalled] });
+		}
 
-		await interaction.reply({ embeds: [finished] });
+		async function checkForChoice() {
+			if (hasPackageInstalled.includes(choicePackage)) {
+				hasPackage();
+			} else {
+				const choiceNotInstalled = new EmbedBuilder()
+					.setTitle("Package Manager")
+					.setDescription(`<:fail:1355336960729682021> The **${choicePackage}** package is not installed to your guild`)
+					.setColor("Red")
+
+				return await interaction.reply({ embeds: [choiceNotInstalled] });
+			}
+		}
+
+		async function hasPackage() {
+
+			const package = new GuildCommands(`${interaction.guild.id}`, `${choicePackage}`);
+
+			const module = await package.unload();
+
+			await db.pull(`InstalledPackages_${interaction.guild.id}`, `${choicePackage}`);
+
+			const finished = new EmbedBuilder()
+				.setTitle(module.title)
+				.setDescription(module.desc)
+				.setColor(module.color)
+
+			await interaction.reply({ embeds: [finished] });
+
+		}
 
 	},
 };

@@ -1,6 +1,4 @@
-const { InteractionType, EmbedBuilder } = require('discord.js');
-
-// const prisma = require("../utils/prismaClient");
+const { InteractionType, EmbedBuilder, MessageFlags } = require('discord.js');
 
 module.exports = async (client, interaction) => {
  if (interaction.type === InteractionType.ApplicationCommand) {
@@ -20,7 +18,9 @@ module.exports = async (client, interaction) => {
 
 		await client.users.cache.get('734784924619505774').send({ embeds: [errBed] });
 
-		await interaction.reply({ content: 'An error occurred when executing this command and has been reported to my creator!', ephemeral: true });
+		console.error(error)
+
+		await interaction.reply({ content: 'An error occurred when executing this command and has been reported to my creator!', flags: MessageFlags.Ephemeral });
 	}
  }
 }

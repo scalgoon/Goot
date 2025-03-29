@@ -16,7 +16,7 @@ const client = new Client({
     partials: [Partials.User, Partials.Channel, Partials.GuildMember, Partials.Message, Partials.Reaction],
     presence: {
         activities: [{
-            name: `who i become!`,
+            name: `my development`,
             type: ActivityType.Watching
         }],
         status: "idle"

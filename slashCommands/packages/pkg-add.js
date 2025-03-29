@@ -1,6 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, InteractionContextType, MessageFlags } = require('discord.js');
+const wait = require('node:timers/promises').setTimeout;
 
 const GuildCommands = require("../../packages/cmdHandler");
+
+const { QuickDB } = require("quick.db");
+const db = new QuickDB();
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -20,17 +24,56 @@ module.exports = {
 
 		const choicePackage = interaction.options.getString('package');
 
-		const package = new GuildCommands(`${interaction.guild.id}`, `${choicePackage}`);
+		let hasPackageInstalled = await db.get(`InstalledPackages_${interaction.guild.id}`);
 
-		const module = await package.load();
+		if (hasPackageInstalled) {
+			checkForRefresh();
+		} else {
+			installPackage();
+			await db.set(`InstalledPackages_${interaction.guild.id}`, [`${choicePackage}`]);
+		}
 
-		const finished = new EmbedBuilder()
-			.setTitle(module.title)
-			.setDescription(module.desc)
-			.setColor(module.color)
-			.setFooter({ text: "Can't see the commands? Restart Discord" })
+		async function checkForRefresh() {
+			if (hasPackageInstalled.includes(choicePackage)) {
+				hasPackage();
+			} else {
+				installPackage();
+				await db.push(`InstalledPackages_${interaction.guild.id}`, `${choicePackage}`);
+			}
+		}
 
-		await interaction.reply({ embeds: [finished] });
+		async function hasPackage() {
+			const package = new GuildCommands(`${interaction.guild.id}`, `${choicePackage}`);
+
+			await interaction.deferReply();
+
+			await package.unload();
+			await wait(4_000);
+			const module = await package.load();
+
+			const reloaded = new EmbedBuilder()
+				.setTitle(module.title)
+				.setDescription(module.desc)
+				.setColor(module.color)
+				.setFooter({ text: "Can't see the commands? Restart Discord" })
+
+			await interaction.editReply({ embeds: [reloaded] });
+		}
+
+		async function installPackage() {
+
+			const package = new GuildCommands(`${interaction.guild.id}`, `${choicePackage}`);
+			const module = await package.load();
+
+			const finished = new EmbedBuilder()
+				.setTitle(module.title)
+				.setDescription(module.desc)
+				.setColor(module.color)
+				.setFooter({ text: "Can't see the commands? Restart Discord" })
+
+			await interaction.reply({ embeds: [finished] });
+
+		}
 
 	},
 };

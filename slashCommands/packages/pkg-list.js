@@ -1,4 +1,7 @@
-const { SlashCommandBuilder, PermissionFlagsBits, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, InteractionContextType, EmbedBuilder } = require('discord.js');
+
+const { QuickDB } = require("quick.db");
+const db = new QuickDB();
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,6 +11,19 @@ module.exports = {
 		.setContexts(InteractionContextType.Guild),
 	async execute(client, interaction) {
 
+		let hasPackageInstalled = await db.get(`InstalledPackages_${interaction.guild.id}`);
+
+		const listbed = new EmbedBuilder()
+			.setTitle("Package Information")
+			.setDescription("Packages are collections of commands you can install to make Goot reflect your needs!")
+			.addFields({ name: "Available Packages", value: "<:canvas:1355337061175136457> Canvas\n<:games:1355337059564257418> Games\n<:leveling:1355337102069334200> Leveling\n<:moderation:1355337099041177781> Moderation\n<:music:1355337100496605314> Music" })
+			.setColor("Random")
+
+		if (hasPackageInstalled.length > 0) {
+			listbed.addFields({ name: "Installed Packages", value: `${hasPackageInstalled.map((x) => `\`${x}\``).join(", ")}` })
+		}
+
+		await interaction.reply({ embeds: [listbed] });
 	},
 };
 
