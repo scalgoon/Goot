@@ -1,9 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
-		.setDescription('Sends the bot\'s ping and latency'),
+		.setDescription('Sends the bot\'s ping and latency.')
+		.setContexts(InteractionContextType.Guild),
 	async execute(client, interaction) {
 		
 	},
@@ -12,7 +13,7 @@ module.exports = {
 module.exports.config = {
     name: "help",
     usage: "**/help**",
-    description: "Sends the bot\'s ping and latency"
+    description: "Sends the bot\'s ping and latency."
 }
 
 // emojis: <:pass:1355337017357238464> <:fail:1355336960729682021>

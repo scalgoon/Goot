@@ -12,6 +12,7 @@
     "@prisma/client": "^6.5.0",
     "better-sqlite3": "^11.9.1",
     "colors": "^1.4.0",
+    "discord-gamecord": "^4.4.2",
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7",
     "glob": "^11.0.1",

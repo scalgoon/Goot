@@ -14,6 +14,7 @@ module.exports = {
 				.setDescription('Specific genre of commands!')
 				.setRequired(true)
 				.addChoices(
+					{ name: 'Canvas', value: 'canvas' },
 					{ name: 'Games', value: 'games' },
 					{ name: 'Moderation', value: 'moderation' },
 				))

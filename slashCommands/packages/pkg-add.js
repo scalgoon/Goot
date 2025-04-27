@@ -15,6 +15,7 @@ module.exports = {
 				.setDescription('Specific genre of commands!')
 				.setRequired(true)
 				.addChoices(
+					{ name: 'Canvas', value: 'canvas' },
 					{ name: 'Games', value: 'games' },
 					{ name: 'Moderation', value: 'moderation' },
 				))
@@ -43,13 +44,9 @@ module.exports = {
 		}
 
 		async function hasPackage() {
-			const package = new GuildCommands(`${interaction.guild.id}`, `${choicePackage}`);
+			const package = new GuildCommands(`${interaction.guild.id}`, `${choicePackage}`, interaction);
 
-			await interaction.deferReply();
-
-			await package.unload();
-			await wait(4_000);
-			const module = await package.load();
+			const module = await package.reload();
 
 			const reloaded = new EmbedBuilder()
 				.setTitle(module.title)
@@ -57,12 +54,12 @@ module.exports = {
 				.setColor(module.color)
 				.setFooter({ text: "Can't see the commands? Restart Discord" })
 
-			await interaction.editReply({ embeds: [reloaded] });
+			await interaction.reply({ embeds: [reloaded] });
 		}
 
 		async function installPackage() {
 
-			const package = new GuildCommands(`${interaction.guild.id}`, `${choicePackage}`);
+			const package = new GuildCommands(`${interaction.guild.id}`, `${choicePackage}`, interaction);
 			const module = await package.load();
 
 			const finished = new EmbedBuilder()
