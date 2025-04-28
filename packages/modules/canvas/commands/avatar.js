@@ -12,8 +12,6 @@ module.exports = {
         .setContexts(InteractionContextType.Guild),
     async execute(client, interaction) {
 
-        console.log("sus3")
-
         const user = interaction.options.getUser('user');
 
         let userAvatar = user.displayAvatarURL({ size: 512 });
