@@ -34,7 +34,7 @@ module.exports = {
 						{ name: "Description", value: cmd2.config.description },
 						{ name: "Usage", value: `\n${cmd2.config.usage}` }
 					)
-					.setColor("Random")
+					.setColor("#911729")
 
 				return interaction.reply({ embeds: [slashHelpBed] });
 
@@ -58,11 +58,11 @@ module.exports = {
 		let embed = new EmbedBuilder()
 			.setTitle("Hello, I'm Goot!")
 			.setDescription("Here is a list of commands you can use in your server.\n-# Do **/help [command]** to learn more about a specific command.")
-			.addFields({ name: "<:slash:908546180265422909> Base Commands", value: "`/pkg-add`, `/pkg-list`, `/pkg-remove`, `/botinfo`, `/help`, `/ping`" })
-			.setColor("Random")
+			.addFields({ name: "<:slash:908546180265422909> Base Commands", value: "`/pkg-add`, `/pkg-list`, `/pkg-remove`, `/botinfo`, `/help`, `/ping`, `/setup`" })
+			.setColor("#911729")
 
 		if (packagedCmds.length > 0) {
-			embed.addFields({ name: "<:packages:1355338718256304159> Package Commands", value: packagedCmds.map(c => '`/' + c + '`').join(', ') })
+			embed.addFields({ name: "<:box:1366500455555006566> Package Commands", value: packagedCmds.map(c => '`/' + c + '`').join(', ') })
 		}
 
 		try {

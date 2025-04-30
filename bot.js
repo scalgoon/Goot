@@ -30,6 +30,7 @@ require("colors");
 require('./utils/handler')(client);
 
 module.exports.clientCmds = client.commands = new Collection();
+module.exports.userHeatLevel = userHeatLevel = new Collection();
 
 const fs = require('node:fs');
 const path = require('node:path');

@@ -1,6 +1,7 @@
-const prisma = require('../utils/prismaClient.js');
-
 const { EmbedBuilder } = require('discord.js');
+
+const prisma = require('../../../../utils/prismaClient.js');
+const { userHeatLevel } = require('../../../../bot.js');
 
 const ShortUniqueId = require('short-unique-id');
 
@@ -17,42 +18,35 @@ class WarnMember {
 
         const warnGuild = await this.client.guilds.fetch(this.guild);
 
-        let warnMem = warnGuild.members.cache.find(member => member.id === this.userID)
+        let warnMem = warnGuild.members.cache.find(member => member.id === this.userID);
 
         const uid = new ShortUniqueId();
 
         let lid = uid.rnd();
 
-        const warnLog = await prisma.userModLog.create({
+        await prisma.userModLog.create({
             data: {
                 userid: `${this.userID}`,
                 logid: `${lid}`,
                 staff: `${this.staff.user.username}`,
                 action: `Warn`,
                 reason: `${this.warnReason}`,
-                heatlvl: `2`
+                heatlvl: `2`,
+                timestamp: `<t:${Math.floor(new Date() / 1000)}:R>`
             }
         })
 
-        let userheat = await prisma.user.findUnique({
-            where: {
-                id: this.userID
-            },
-            select: {
-                heat: true
-            }
-        })
+        let userHeat = userHeatLevel.get(`${this.userID}_${this.guild}`);
 
-        let newHeat = parseInt(userheat.heat) + parseInt(2);
+        let newHeat;
 
-        const finalHeat = await prisma.user.update({
-            where: {
-                id: this.userID
-            },
-            data: {
-                heat: `${newHeat}`
-            }
-        })
+        if (!userHeat) {
+            newHeat = parseInt(0) + parseInt(2);
+        } else {
+            newHeat = parseInt(userHeat) + parseInt(2);
+        }
+
+        userHeatLevel.set(`${this.userID}_${this.guild}`, newHeat);
 
         let modlog = await prisma.guild.findUnique({
             where: {
@@ -64,14 +58,14 @@ class WarnMember {
         })
 
         let logbed = new EmbedBuilder()
-            .setTitle(`Member Warned | LID: ${lid}`)
+            .setTitle(`Member Warned | Case: ${lid}`)
             .addFields({ name: `Member Affected`, value: `<@${this.userID}>` })
             .addFields({ name: `Given By`, value: `<@${this.staff.user.id}>` })
             .addFields({ name: `Warn Reason`, value: `${this.warnReason}` })
             .setColor("Yellow")
             .setFooter({ text: `Heat: +2 (${newHeat})` })
 
-        let logmsg = await this.client.channels.cache.get(modlog.log_chnl).send({ embeds: [logbed] });
+        await this.client.channels.cache.get(modlog.log_chnl).send({ embeds: [logbed] });
 
         let warnbed = new EmbedBuilder()
             .setTitle("Warning Received")
@@ -85,7 +79,14 @@ class WarnMember {
             console.log(e)
         }
 
-        return lid;
+        let obj = {
+            title: `User Warned | ${lid}`,
+            desc: `<:pass:1355337017357238464> Successfully warned <@${this.userID}>`,
+            footer: `Heat: +2`,
+            id: lid
+        }
+
+        return obj;
     }
 }
 

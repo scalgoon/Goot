@@ -26,6 +26,7 @@ model UserModLog {
   action String
   reason String
   heatlvl String
+  timestamp String
 }
 
 model Commands {
