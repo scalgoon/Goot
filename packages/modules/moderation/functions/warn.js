@@ -2,12 +2,13 @@ const { EmbedBuilder } = require('discord.js');
 
 const prisma = require('../../../../utils/prismaClient.js');
 const { userHeatLevel } = require('../../../../bot.js');
+const VerifyMember = require('../functions/verifyMember.js');
 
 const ShortUniqueId = require('short-unique-id');
 
 class WarnMember {
-    constructor(guild, userID, warnReason, client, staff) {
-        this.guild = guild;
+    constructor(guildID, userID, warnReason, client, staff) {
+        this.guildID = guildID;
         this.userID = userID;
         this.staff = staff
         this.warnReason = warnReason;
@@ -16,7 +17,11 @@ class WarnMember {
 
     async warn() {
 
-        const warnGuild = await this.client.guilds.fetch(this.guild);
+        let memtoverify = new VerifyMember(this.guildID, this.userID);
+
+        await memtoverify.verify();
+
+        const warnGuild = await this.client.guilds.fetch(this.guildID);
 
         let warnMem = warnGuild.members.cache.find(member => member.id === this.userID);
 
@@ -26,7 +31,7 @@ class WarnMember {
 
         await prisma.userModLog.create({
             data: {
-                userid: `${this.userID}`,
+                userid: `${this.guildID}_${this.userID}`,
                 logid: `${lid}`,
                 staff: `${this.staff.user.username}`,
                 action: `Warn`,
@@ -36,7 +41,7 @@ class WarnMember {
             }
         })
 
-        let userHeat = userHeatLevel.get(`${this.userID}_${this.guild}`);
+        let userHeat = userHeatLevel.get(`${this.userID}_${this.guildID}`);
 
         let newHeat;
 
@@ -46,11 +51,11 @@ class WarnMember {
             newHeat = parseInt(userHeat) + parseInt(2);
         }
 
-        userHeatLevel.set(`${this.userID}_${this.guild}`, newHeat);
+        userHeatLevel.set(`${this.userID}_${this.guildID}`, newHeat);
 
         let modlog = await prisma.guild.findUnique({
             where: {
-                id: this.guild
+                id: this.guildID
             },
             select: {
                 log_chnl: true
@@ -76,7 +81,7 @@ class WarnMember {
         try {
             await warnMem.send({ embeds: [warnbed] });
         } catch(e) {
-            console.log(e)
+            if (e.code === "50007") return;
         }
 
         let obj = {

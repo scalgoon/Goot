@@ -2,8 +2,8 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, InteractionConte
 
 const prisma = require('../../../../utils/prismaClient.js');
 const pagination = require('../../../../utils/pagination.js');
-
 const { userHeatLevel } = require('../../../../bot.js');
+const VerifyMember = require('../functions/verifyMember.js');
 
 const { log } = require('util');
 
@@ -17,6 +17,10 @@ module.exports = {
     async execute(client, interaction) {
 
         const targetUser = interaction.options.getUser('member');
+
+        let memtoverify = new VerifyMember(interaction.guild.id, targetUser.id);
+
+        await memtoverify.verify();
 
         let userAvatar = targetUser.displayAvatarURL();
 
@@ -58,22 +62,12 @@ module.exports = {
 
         const userInfo = await prisma.user.findUnique({
             where: {
-                id: targetUser.id
+                id: `${interaction.guild.id}_${targetUser.id}`
             },
             select: {
                 logs: true
             }
         })
-
-        if (userInfo === null) {
-            await prisma.user.create({
-                data: {
-                    id: targetUser.id
-                }
-            })
-
-            return await interaction.reply({ content: "Added user to database, please re-run command", flags: MessageFlags.Ephemeral });
-        }
 
         let memHeat;
 
