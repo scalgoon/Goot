@@ -16,6 +16,7 @@ model Guild {
   id String @id
   prefix String?
   log_chnl String?
+  custom_commands GuildCustomCommands[]
 }
 
 model UserModLog {
@@ -25,14 +26,15 @@ model UserModLog {
   logid String @id
   action String
   reason String
+  duration String?
   heatlvl String
   timestamp String
 }
 
-model Commands {
-  placeholder String @unique @default("//k/")
-  guild String
-  guildName String
+model GuildCustomCommands {
+  guildid String
+  guild Guild @relation(fields: [guildid], references: [id])
+  trigger String @id
   text String?
   title String?
   description String?

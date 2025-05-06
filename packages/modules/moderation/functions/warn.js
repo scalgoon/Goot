@@ -62,15 +62,17 @@ class WarnMember {
             }
         })
 
-        let logbed = new EmbedBuilder()
-            .setTitle(`Member Warned | Case: ${lid}`)
-            .addFields({ name: `Member Affected`, value: `<@${this.userID}>` })
-            .addFields({ name: `Given By`, value: `<@${this.staff.user.id}>` })
-            .addFields({ name: `Warn Reason`, value: `${this.warnReason}` })
-            .setColor("Yellow")
-            .setFooter({ text: `Heat: +2 (${newHeat})` })
+        if (modlog.log_chnl) {
+            let logbed = new EmbedBuilder()
+                .setTitle(`Member Warned | Case: ${lid}`)
+                .addFields({ name: `Member Affected`, value: `<@${this.userID}>` })
+                .addFields({ name: `Given By`, value: `<@${this.staff.user.id}>` })
+                .addFields({ name: `Warn Reason`, value: `${this.warnReason}` })
+                .setColor("Yellow")
+                .setFooter({ text: `Heat: +2 (${newHeat})` })
 
-        await this.client.channels.cache.get(modlog.log_chnl).send({ embeds: [logbed] });
+            await this.client.channels.cache.get(modlog.log_chnl).send({ embeds: [logbed] });
+        }
 
         let warnbed = new EmbedBuilder()
             .setTitle("Warning Received")
@@ -80,7 +82,7 @@ class WarnMember {
 
         try {
             await warnMem.send({ embeds: [warnbed] });
-        } catch(e) {
+        } catch (e) {
             if (e.code === "50007") return;
         }
 

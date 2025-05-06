@@ -11,6 +11,7 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .setContexts(InteractionContextType.Guild),
     async execute(client, interaction) {
+        await interaction.deferReply();
 
         const targetUser = interaction.options.getUser('member');
 
@@ -49,7 +50,7 @@ module.exports = {
             .setFooter({ text: warned.footer })
             .setTimestamp(new Date())
 
-        await interaction.reply({ embeds: [warnBed] });
+        await interaction.editReply({ embeds: [warnBed] });
 
     },
 };

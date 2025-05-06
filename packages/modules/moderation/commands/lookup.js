@@ -32,7 +32,7 @@ module.exports = {
             return await interaction.reply({ content: "Cannot fetch members that are not in the guild.", flags: MessageFlags.Ephemeral });
         }
 
-        let userNickname = member.displayName || "No Nickname";
+        let userNickname = member.displayName ?? "No Nickname";
 
         let memberRoles = member.roles.cache.filter((roles) => roles.id !== interaction.guild.id).map((role) => role.toString());
 
@@ -92,7 +92,8 @@ module.exports = {
         if (userInfo.logs.length === 0 || !userInfo) {
             pageTwoEmbed.addFields({ name: `Moderation Logs`, value: `*Member has no logs in the database*` });
         } else {
-            const userLogs = userInfo.logs.slice(0, 5).map((item) => `\n**Log ID: ${item.logid}**\n${item.action} (+${item.heatlvl}) by ${item.staff} - ${item.timestamp}\n-# Reason: ${item.reason}`).join('\n');
+
+            const userLogs = userInfo.logs.slice(0, 5).map((item) => `\n**Log ID: ${item.logid}**\n${item.action} (+${item.heatlvl}) by ${item.staff} - ${item.timestamp}\n-# Duration: ${item.duration ?? "N/A"}\n-# Reason: ${item.reason}`).join('\n');
 
             pageTwoEmbed.addFields({ name: `Moderation Logs`, value: userLogs });
         }
