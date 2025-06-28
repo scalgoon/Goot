@@ -48,9 +48,9 @@ module.exports = {
                 return await interaction.reply({ embeds: [notinguild], flags: MessageFlags.Ephemeral });
             }
 
-            if (Mem.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-                return await interaction.reply({ embeds: [sameperm], flags: MessageFlags.Ephemeral });
-            }
+            // if (Mem.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+            //     return await interaction.reply({ embeds: [sameperm], flags: MessageFlags.Ephemeral });
+            // }
 
             if (correctDur === undefined) {
                 return await interaction.reply({ embeds: [undefinedtime], flags: MessageFlags.Ephemeral });
