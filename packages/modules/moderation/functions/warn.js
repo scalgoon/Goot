@@ -76,7 +76,7 @@ class WarnMember {
 
         let warnbed = new EmbedBuilder()
             .setTitle("Warning Received")
-            .setDescription(`You have been warned in **${warnMem.guild.name}** for:\n\`\`\`\n${this.warnReason}\n\`\`\``)
+            .setDescription(`> **Guild**: ${warnMem.guild.name}\n> **Reason**: ${this.warnReason}`)
             .setColor("Red")
             .setTimestamp(new Date())
 

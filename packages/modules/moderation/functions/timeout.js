@@ -12,7 +12,7 @@ class TimeoutMember {
         this.guildID = guildID;
         this.userID = userID;
         this.timeoutReason = timeoutReason;
-        this.timeoutDur = timeoutDur
+        this.timeoutDur = timeoutDur;
         this.client = client;
         this.staff = staff;
     }
@@ -33,18 +33,18 @@ class TimeoutMember {
 
         let timestampDur = ms(this.timeoutDur, { long: true })
 
-        // await prisma.userModLog.create({
-        //     data: {
-        //         userid: `${this.guildID}_${this.userID}`,
-        //         logid: `${lid}`,
-        //         staff: `${this.staff.user.username}`,
-        //         action: `Timeout`,
-        //         reason: `${this.timeoutReason}`,
-        //         duration: `${timestampDur}`,
-        //         heatlvl: `2`,
-        //         timestamp: `<t:${Math.floor(new Date() / 1000)}:R>`
-        //     }
-        // })
+        await prisma.userModLog.create({
+            data: {
+                userid: `${this.guildID}_${this.userID}`,
+                logid: `${lid}`,
+                staff: `${this.staff.user.username}`,
+                action: `Timeout`,
+                reason: `${this.timeoutReason}`,
+                duration: `${timestampDur}`,
+                heatlvl: `2`,
+                timestamp: `<t:${Math.floor(new Date() / 1000)}:R>`
+            }
+        })
 
         let userHeat = userHeatLevel.get(`${this.userID}_${this.guildID}`);
 
@@ -67,7 +67,7 @@ class TimeoutMember {
             }
         })
 
-        // await muteMem.timeout(this.timeoutDur, this.timeoutReason);
+        await muteMem.timeout(this.timeoutDur, this.timeoutReason);
 
         if (modlog.log_chnl) {
             let logbed = new EmbedBuilder()
@@ -82,15 +82,16 @@ class TimeoutMember {
             await this.client.channels.cache.get(modlog.log_chnl).send({ embeds: [logbed] });
         }
 
+        let workingTimestamp = (this.timeoutDur/1000) + Math.round(+new Date()/1000);
+
         let warnbed = new EmbedBuilder()
             .setTitle("Timeout Received")
-            // .setDescription(`You have been timed out in **${muteMem.guild.name}** for:\n\`\`\`\n${this.timeoutReason}\n\`\`\``)
             .setDescription(`> **Guild**: ${muteMem.guild.name}\n> **Reason**: ${this.timeoutReason}`)
             .setColor("Red")
             .setTimestamp(new Date())
 
         try {
-            await muteMem.send({ content: `Your timeout will end in <t:${this.timeoutDur}:t>`, embeds: [warnbed] });
+            await muteMem.send({ content: `Your timeout will end in <t:${workingTimestamp}:R>`, embeds: [warnbed] });
         } catch (e) {
             if (e.code === "50007") return;
         }
