@@ -25,13 +25,13 @@ class TimeoutMember {
 
         const muteGuild = await this.client.guilds.fetch(this.guildID);
 
-        let muteMem = muteGuild.members.cache.find(member => member.id === this.userID)
+        let muteMem = muteGuild.members.cache.find(member => member.id === this.userID);
 
         const uid = new ShortUniqueId();
 
         let lid = uid.rnd();
 
-        let timestampDur = ms(this.timeoutDur, { long: true })
+        let timestampDur = ms(this.timeoutDur, { long: true });
 
         await prisma.userModLog.create({
             data: {
@@ -69,29 +69,29 @@ class TimeoutMember {
 
         await muteMem.timeout(this.timeoutDur, this.timeoutReason);
 
+        let workingTimestamp = (this.timeoutDur/1000) + Math.round(+new Date()/1000);
+
         if (modlog.log_chnl) {
             let logbed = new EmbedBuilder()
                 .setTitle(`Member Muted | LID: ${lid}`)
                 .addFields({ name: `Member Affected`, value: `<@${this.userID}>` })
                 .addFields({ name: `Given By`, value: `<@${this.staff.user.id}>` })
                 .addFields({ name: `Timeout Reason`, value: `${this.timeoutReason}` })
-                .addFields({ name: `Timeout Duration`, value: `${timestampDur}` })
+                .addFields({ name: `Timeout Duration`, value: `${this.timeoutDur}` })
                 .setColor("Blue")
                 .setFooter({ text: `Heat: +2 (${newHeat})` })
 
             await this.client.channels.cache.get(modlog.log_chnl).send({ embeds: [logbed] });
         }
 
-        let workingTimestamp = (this.timeoutDur/1000) + Math.round(+new Date()/1000);
-
-        let warnbed = new EmbedBuilder()
+        let mutebed = new EmbedBuilder()
             .setTitle("Timeout Received")
             .setDescription(`> **Guild**: ${muteMem.guild.name}\n> **Reason**: ${this.timeoutReason}`)
             .setColor("Red")
             .setTimestamp(new Date())
 
         try {
-            await muteMem.send({ content: `Your timeout will end in <t:${workingTimestamp}:R>`, embeds: [warnbed] });
+            await muteMem.send({ content: `Your timeout will end <t:${workingTimestamp}:R>`, embeds: [mutebed] });
         } catch (e) {
             if (e.code === "50007") return;
         }
@@ -134,14 +134,14 @@ class TimeoutMember {
             await this.client.channels.cache.get(modlog.log_chnl).send({ embeds: [logbed] });
         }
 
-        let warnbed = new EmbedBuilder()
+        let mutebed = new EmbedBuilder()
             .setTitle("Timeout Removed")
             .setDescription(`Your timeout has been removed in **${unmuteMem.guild.name}**`)
             .setColor("Red")
             .setTimestamp(new Date())
 
         try {
-            await unmuteMem.send({ embeds: [warnbed] });
+            await unmuteMem.send({ embeds: [mutebed] });
         } catch (e) {
             if (e.code === "50007") return;
         }

@@ -5,8 +5,6 @@ const pagination = require('../../../../utils/pagination.js');
 const { userHeatLevel } = require('../../../../bot.js');
 const VerifyMember = require('../functions/verifyMember.js');
 
-const { log } = require('util');
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('lookup')
@@ -92,9 +90,7 @@ module.exports = {
         if (userInfo.logs.length === 0 || !userInfo) {
             pageTwoEmbed.addFields({ name: `Moderation Logs`, value: `*Member has no logs in the database*` });
         } else {
-
             const userLogs = userInfo.logs.slice(0, 5).map((item) => `\n**Log ID: ${item.logid}**\n${item.action} (+${item.heatlvl}) by ${item.staff} - ${item.timestamp}\n-# Duration: ${item.duration ?? "N/A"}\n-# Reason: ${item.reason}`).join('\n');
-
             pageTwoEmbed.addFields({ name: `Moderation Logs`, value: userLogs });
         }
 
