@@ -143,11 +143,11 @@ module.exports = {
                 let roleEmbed = new EmbedBuilder()
                     .setTitle("Settings: Staff Roles")
                     .addFields(
-                        { name: "Permission Level: 5", value: `${role5}\n-# Default: MANAGE_GUILD`, inline: true },
-                        { name: "Permission Level: 4", value: `${role4}\n-# Default: BAN_MEMBERS`, inline: true },
-                        { name: "Permission Level: 3", value: `${role3}\n-# Default: KICK_MEMBERS`, inline: true },
-                        { name: "Permission Level: 2", value: `${role2}\n-# Default: MUTE_MEMBERS`, inline: true },
-                        { name: "Permission Level: 1", value: `${role1}\n-# Default: MANAGE_MESSAGES`, inline: true },
+                        { name: "Permission Level: 5", value: `${role5}\n-# Default: ManageGuild`, inline: true },
+                        { name: "Permission Level: 4", value: `${role4}\n-# Default: BanMembers`, inline: true },
+                        { name: "Permission Level: 3", value: `${role3}\n-# Default: KickMembers`, inline: true },
+                        { name: "Permission Level: 2", value: `${role2}\n-# Default: ModerateMembers`, inline: true },
+                        { name: "Permission Level: 1", value: `${role1}\n-# Default: ManageMessages`, inline: true },
                         { name: "Permission Level: 0", value: `${role0}\n-# Default: @everyone`, inline: true }
                     )
                     .setColor("Green")
