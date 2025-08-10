@@ -1,8 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, PermissionFlagsBits } = require('discord.js');
 
 const { Emojify } = require('discord-gamecord');
 
 module.exports = {
+    permission: 0,
+    defaultPerm: PermissionFlagsBits.ViewChannel,
     data: new SlashCommandBuilder()
         .setName('emojify')
         .setDescription('Turn text into emojis!')
@@ -23,5 +25,6 @@ module.exports = {
 module.exports.config = {
     name: "emojify",
     usage: "**/emojify [text]**",
-    description: "Turn text into emojis!"
+    description: "Turn text into emojis!",
+    permission: 0
 }

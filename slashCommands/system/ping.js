@@ -1,6 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+
+const prisma = require('../../utils/prismaClient');
 
 module.exports = {
+  permission: 0,
+  defaultPerm: PermissionFlagsBits.ViewChannel,
   data: new SlashCommandBuilder()
     .setName('ping')
     .setDescription('Sends the bot\'s ping and latency.'),
@@ -44,5 +48,6 @@ module.exports = {
 module.exports.config = {
   name: "ping",
   usage: "**/ping**",
-  description: "Sends the bot\'s ping and latency."
+  description: "Sends the bot\'s ping and latency.",
+  permission: 0
 }

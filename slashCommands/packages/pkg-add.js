@@ -7,6 +7,8 @@ const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 
 module.exports = {
+	permission: 5,
+	defaultPerm: PermissionFlagsBits.ManageGuild,
 	data: new SlashCommandBuilder()
 		.setName('pkg-add')
 		.setDescription('Add a command package to your guild.')
@@ -78,5 +80,6 @@ module.exports = {
 module.exports.config = {
 	name: "pkg-add",
 	usage: "**/pkg-add [package]**",
-	description: "Add a command package to your guild."
+	description: "Add a command package to your guild.",
+	permission: 5
 }

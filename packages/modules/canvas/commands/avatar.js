@@ -1,6 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
+    permission: 0,
+    defaultPerm: PermissionFlagsBits.ViewChannel,
     data: new SlashCommandBuilder()
         .setName('avatar')
         .setDescription('Fetch a user\'s avatar.')
@@ -30,7 +32,8 @@ module.exports = {
 module.exports.config = {
     name: "avatar",
     usage: "**/avatar [user]**",
-    description: "Fetch a user\'s avatar."
+    description: "Fetch a user\'s avatar.",
+    permission: 0
 }
 
 // emojis: <:pass:1355337017357238464> <:fail:1355336960729682021>

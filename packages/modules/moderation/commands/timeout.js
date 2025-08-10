@@ -5,12 +5,14 @@ const ms = require('ms');
 const TimeoutMember = require('../functions/timeout');
 
 module.exports = {
+    permission: 2,
+    defaultPerm: PermissionFlagsBits.ModerateMembers,
     data: new SlashCommandBuilder()
         .setName('timeout')
         .setDescription('Manage a member\'s timeout.')
         .addSubcommand(subcommand => subcommand.setName('give').setDescription('Give a timeout to a member').addUserOption(option => option.setName('member').setDescription('The member you want to timeout.').setRequired(true)).addStringOption(option => option.setName('duration').setDescription('The duration for the timeout.').setRequired(true)).addStringOption(option => option.setName('reason').setDescription('The reason for the timeout.').setRequired(true)))
         .addSubcommand(subcommand => subcommand.setName('remove').setDescription('Remove a timeout from a member').addUserOption(option => option.setName('member').setDescription('The member who\'s timeout you want to remove.').setRequired(true)).addStringOption(option => option.setName('reason').setDescription('The reason for removing the timeout.').setRequired(true)))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
         .setContexts(InteractionContextType.Guild),
     async execute(client, interaction) {
 
@@ -45,15 +47,15 @@ module.exports = {
             let Mem = Guild.members.cache.find(member => member.id === targetUser.id);
 
             if (!Mem) {
-                return await interaction.reply({ embeds: [notinguild], flags: MessageFlags.Ephemeral });
+                return await interaction.editReply({ embeds: [notinguild], flags: MessageFlags.Ephemeral });
             }
 
             if (Mem.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-                return await interaction.reply({ embeds: [sameperm], flags: MessageFlags.Ephemeral });
+                return await interaction.editReply({ embeds: [sameperm], flags: MessageFlags.Ephemeral });
             }
 
             if (correctDur === undefined) {
-                return await interaction.reply({ embeds: [undefinedtime], flags: MessageFlags.Ephemeral });
+                return await interaction.editReply({ embeds: [undefinedtime], flags: MessageFlags.Ephemeral });
             }
 
             let memtotimeout = new TimeoutMember(interaction.guild.id, targetUser.id, targetReason, correctDur, client, interaction.member);
@@ -118,5 +120,6 @@ module.exports = {
 module.exports.config = {
     name: "timeout",
     usage: "**/timeout [member] [duration] [reason]**",
-    description: "Timeout a member."
+    description: "Timeout a member.",
+    permission: 2
 }

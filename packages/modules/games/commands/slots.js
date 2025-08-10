@@ -1,8 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, PermissionFlagsBits } = require('discord.js');
 
 const { Slots } = require('discord-gamecord');
 
 module.exports = {
+    permission: 0,
+    defaultPerm: PermissionFlagsBits.ViewChannel,
     data: new SlashCommandBuilder()
         .setName('slots')
         .setDescription('Let\'s go gambling!')
@@ -31,5 +33,6 @@ module.exports = {
 module.exports.config = {
     name: "slots",
     usage: "**/slots**",
-    description: "Let\'s go gambling!"
+    description: "Let\'s go gambling!",
+    permission: 0
 }

@@ -6,6 +6,8 @@ const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 
 module.exports = {
+	permission: 5,
+	defaultPerm: PermissionFlagsBits.ManageGuild,
 	data: new SlashCommandBuilder()
 		.setName('pkg-remove')
 		.setDescription('Remove a command package from your guild.')
@@ -73,5 +75,6 @@ module.exports = {
 module.exports.config = {
 	name: "pkg-remove",
 	usage: "**/pkg-remove [package]**",
-	description: "Remove a command package from your guild."
+	description: "Remove a command package from your guild.",
+	permission: 5
 }

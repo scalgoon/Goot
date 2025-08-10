@@ -16,6 +16,8 @@ model Guild {
   id String @id
   prefix String?
   log_chnl String?
+  staff_roles Json?
+  installed_packages Json?
   custom_commands GuildCustomCommands[]
 }
 
@@ -27,7 +29,7 @@ model UserModLog {
   action String
   reason String
   duration String?
-  heatlvl String
+  heatlvl String?
   timestamp String
 }
 

@@ -3,12 +3,14 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, PermissionsBitFi
 const KickMember = require('../functions/kick');
 
 module.exports = {
+    permission: 3,
+    defaultPerm: PermissionFlagsBits.KickMembers,
     data: new SlashCommandBuilder()
         .setName('kick')
         .setDescription('Kick a member from the server.')
         .addUserOption(option => option.setName('member').setDescription('The member you want to kick.').setRequired(true))
         .addStringOption(option => option.setName('reason').setDescription('The reason for the kicking.').setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
         .setContexts(InteractionContextType.Guild),
     async execute(client, interaction) {
         await interaction.deferReply();
@@ -32,11 +34,11 @@ module.exports = {
         let Mem = Guild.members.cache.find(member => member.id === targetUser.id);
 
         if (!Mem) {
-            return await interaction.reply({ embeds: [notinguild], flags: MessageFlags.Ephemeral });
+            return await interaction.editReply({ embeds: [notinguild], flags: MessageFlags.Ephemeral });
         }
 
         if (Mem.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-            return await interaction.reply({ embeds: [sameperm], flags: MessageFlags.Ephemeral });
+            return await interaction.editReply({ embeds: [sameperm], flags: MessageFlags.Ephemeral });
         }
 
         let memtokick = new KickMember(interaction.guild.id, targetUser.id, targetReason, client, interaction.member);
@@ -57,5 +59,6 @@ module.exports = {
 module.exports.config = {
     name: "kick",
     usage: "**/kick [member] [reason]**",
-    description: "Kick a member from the server."
+    description: "Kick a member from the server.",
+    permission: 3
 }

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, PermissionFlagsBits } = require('discord.js');
 
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
@@ -6,6 +6,8 @@ const db = new QuickDB();
 const fs = require('node:fs');
 
 module.exports = {
+	permission: 0,
+	defaultPerm: PermissionFlagsBits.ViewChannel,
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription('Get a list of the bot\'s commands.')
@@ -30,7 +32,8 @@ module.exports = {
 				let slashHelpBed = new EmbedBuilder()
 					.setAuthor({ name: `Information about ${cmd2.config.name}`, iconURL: client.user.displayAvatarURL() })
 					.addFields(
-						{ name: "Command Name", value: cmd2.config.name },
+						{ name: "Command Name", value: cmd2.config.name, inline: true },
+						{ name: "Permission Lvl", value: `${cmd2.config.permission}`, inline: true },
 						{ name: "Description", value: cmd2.config.description },
 						{ name: "Usage", value: `\n${cmd2.config.usage}` }
 					)
@@ -77,5 +80,6 @@ module.exports = {
 module.exports.config = {
 	name: "help",
 	usage: "**/help [command]**",
-	description: "Get a list of the bot\'s commands."
+	description: "Get a list of the bot\'s commands.",
+	permission: 0
 }

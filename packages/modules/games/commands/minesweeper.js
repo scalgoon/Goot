@@ -1,8 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, PermissionFlagsBits } = require('discord.js');
 
 const { Minesweeper } = require('discord-gamecord');
 
 module.exports = {
+    permission: 0,
+    defaultPerm: PermissionFlagsBits.ViewChannel,
     data: new SlashCommandBuilder()
         .setName('minesweeper')
         .setDescription('The classic game with bombs.')
@@ -39,5 +41,6 @@ module.exports = {
 module.exports.config = {
     name: "minesweeper",
     usage: "**/minesweeper**",
-    description: "The classic game with bombs."
+    description: "The classic game with bombs.",
+    permission: 0
 }

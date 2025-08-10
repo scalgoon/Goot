@@ -1,6 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
+    permission: 0,
+    defaultPerm: PermissionFlagsBits.ViewChannel,
     data: new SlashCommandBuilder()
         .setName('phrase')
         .setDescription('Generate a random phrase to use in a sentence.')
@@ -34,5 +36,6 @@ module.exports = {
 module.exports.config = {
     name: "phrase",
     usage: "**/phrase**",
-    description: "Generate a random phrase to use in a sentence."
+    description: "Generate a random phrase to use in a sentence.",
+    permission: 0
 }

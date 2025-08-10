@@ -77,7 +77,7 @@ class TimeoutMember {
                 .addFields({ name: `Member Affected`, value: `<@${this.userID}>` })
                 .addFields({ name: `Given By`, value: `<@${this.staff.user.id}>` })
                 .addFields({ name: `Timeout Reason`, value: `${this.timeoutReason}` })
-                .addFields({ name: `Timeout Duration`, value: `${this.timeoutDur}` })
+                .addFields({ name: `Timeout Duration`, value: `Ends <t:${workingTimestamp}:R>` })
                 .setColor("Blue")
                 .setFooter({ text: `Heat: +2 (${newHeat})` })
 

@@ -1,8 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, PermissionFlagsBits } = require('discord.js');
 
 const { Wordle } = require('discord-gamecord');
 
 module.exports = {
+    permission: 0,
+    defaultPerm: PermissionFlagsBits.ViewChannel,
     data: new SlashCommandBuilder()
         .setName('wordle')
         .setDescription('Guess the word of the day.')
@@ -35,5 +37,6 @@ module.exports = {
 module.exports.config = {
     name: "wordle",
     usage: "**/wordle**",
-    description: "Guess the word of the day."
+    description: "Guess the word of the day.",
+    permission: 0
 }

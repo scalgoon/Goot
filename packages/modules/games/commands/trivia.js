@@ -1,8 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, PermissionFlagsBits } = require('discord.js');
 
 const { Trivia } = require('discord-gamecord');
 
 module.exports = {
+    permission: 0,
+    defaultPerm: PermissionFlagsBits.ViewChannel,
     data: new SlashCommandBuilder()
         .setName('trivia')
         .setDescription('Guess the correct answer.')
@@ -62,5 +64,6 @@ module.exports = {
 module.exports.config = {
     name: "trivia",
     usage: "**/trivia**",
-    description: "Guess the correct answer."
+    description: "Guess the correct answer.",
+    permission: 0
 }

@@ -1,8 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 
 const botInfo = require('../../package.json');
 
 module.exports = {
+    permission: 0,
+    defaultPerm: PermissionFlagsBits.ViewChannel,
 	data: new SlashCommandBuilder()
 		.setName('botinfo')
 		.setDescription('Sends the bot\'s current stats.'),
@@ -11,7 +13,7 @@ module.exports = {
 
         let info = new EmbedBuilder()
             .setAuthor({ name: `Information about Goot`, iconURL: client.user.displayAvatarURL() })
-            .setDescription("Emojis provided by <a:emoji_logo:1355338183084081404> [Icons](https://discord.gg/9AtkECMX2P)\nGames provided by [Discord-Gamecord](https://discord-gamecord.js.org/)")
+            .setDescription("Emojis provided by <a:emoji_logo:1355338183084081404> [Icons](https://discord.gg/9AtkECMX2P)\nGames provided by [Discord-Gamecord](https://discord-gamecord.js.org/)\n⠀\nHave a question? Join my support server [here](https://discord.com/invite/BDcuC9RbPa)!")
             .setColor('#911729')
             .addFields(
                 { name: "Info", value: `\`\`\`yml\nName: ${client.user.tag}\nID: ${client.user.id}\n\`\`\``, inline: true },
@@ -29,5 +31,6 @@ module.exports = {
 module.exports.config = {
     name: "botinfo",
     usage: "**/botinfo**",
-    description: "Sends the bot\'s current stats."
+    description: "Sends the bot\'s current stats.",
+    permission: 0
 }

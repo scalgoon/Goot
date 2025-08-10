@@ -6,6 +6,8 @@ const { userHeatLevel } = require('../../../../bot.js');
 const VerifyMember = require('../functions/verifyMember.js');
 
 module.exports = {
+    permission: 1,
+    defaultPerm: PermissionFlagsBits.ManageMessages,
     data: new SlashCommandBuilder()
         .setName('lookup')
         .setDescription('Lookup info about a specific member.')
@@ -108,5 +110,6 @@ module.exports = {
 module.exports.config = {
     name: "lookup",
     usage: "**/lookup [member]**",
-    description: "Lookup info about a specific member."
+    description: "Lookup info about a specific member.",
+    permission: 1
 }

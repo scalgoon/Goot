@@ -3,6 +3,8 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, PermissionsBitFi
 const WarnMember = require('../functions/warn');
 
 module.exports = {
+    permission: 1,
+    defaultPerm: PermissionFlagsBits.ManageMessages,
     data: new SlashCommandBuilder()
         .setName('warn')
         .setDescription('Give a member a warning.')
@@ -32,11 +34,11 @@ module.exports = {
         let Mem = Guild.members.cache.find(member => member.id === targetUser.id);
 
         if (!Mem) {
-            return await interaction.reply({ embeds: [notinguild], flags: MessageFlags.Ephemeral });
+            return await interaction.editReply({ embeds: [notinguild], flags: MessageFlags.Ephemeral });
         }
 
         if (Mem.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-            return await interaction.reply({ embeds: [sameperm], flags: MessageFlags.Ephemeral });
+            return await interaction.editReply({ embeds: [sameperm], flags: MessageFlags.Ephemeral });
         }
 
         let memtowarn = new WarnMember(interaction.guild.id, targetUser.id, targetReason, client, interaction.member);
@@ -58,5 +60,6 @@ module.exports = {
 module.exports.config = {
     name: "warn",
     usage: "**/warn [member] [reason]**",
-    description: "Give a member a warning."
+    description: "Give a member a warning.",
+    permission: 1
 }

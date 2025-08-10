@@ -30,6 +30,19 @@ module.exports = async (client, guild) => {
 
     // database stuff
 
+    const staffRolesInteger = {
+        "0": null,
+        "1": null,
+        "2": null,
+        "3": null,
+        "4": null,
+        "5": null
+    };
+
+    const installedPackages = {
+        "modules": []
+    };
+
     const guildExists = await prisma.guild.findUnique({
         where: {
             id: guild.id
@@ -39,7 +52,9 @@ module.exports = async (client, guild) => {
     if (guildExists === null) {
         await prisma.guild.create({
             data: {
-                id: guild.id
+                id: guild.id,
+                staff_roles: staffRolesInteger,
+                installed_packages: installedPackages
             }
         })
     }
