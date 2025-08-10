@@ -27,7 +27,7 @@ module.exports = {
         let member;
 
         try {
-           member = await interaction.guild.members.fetch(targetUser.id);
+            member = await interaction.guild.members.fetch(targetUser.id);
         } catch (e) {
             return await interaction.reply({ content: "Cannot fetch members that are not in the guild.", flags: MessageFlags.Ephemeral });
         }
@@ -39,7 +39,7 @@ module.exports = {
         let botStatus = targetUser.bot ? "Member is a bot" : "Member is not a bot";
 
         const pageOneEmbed = new EmbedBuilder()
-            .setTitle(`${targetUser.username.toUpperCase()}'s Information`)
+            .setAuthor({ name: `Information about ${targetUser.username}`, iconURL: interaction.member.displayAvatarURL() })            
             .setThumbnail(userAvatar)
             .setDescription(`**Bot Check**:\n-# ${botStatus}`)
             .addFields({
@@ -82,12 +82,12 @@ module.exports = {
         }
 
         const pageTwoEmbed = new EmbedBuilder()
-        .setTitle(`${targetUser.username.toUpperCase()}'s Logs`)
-        .setThumbnail(userAvatar)
-        .setDescription(`-# Heat Level: ${memHeat}`)
-        .setColor("#911729")
-        .setFooter({ text: `Total of ${userInfo.logs.length} cases` })
-        .setTimestamp(new Date())
+            .setAuthor({ name: `Logs for ${targetUser.username}`, iconURL: interaction.member.displayAvatarURL() })    
+            .setThumbnail(userAvatar)
+            .setDescription(`-# Heat Level: ${memHeat}`)
+            .setColor("#911729")
+            .setFooter({ text: `Total of ${userInfo.logs.length} cases` })
+            .setTimestamp(new Date())
 
         if (userInfo.logs.length === 0 || !userInfo) {
             pageTwoEmbed.addFields({ name: `Moderation Logs`, value: `*Member has no logs in the database*` });

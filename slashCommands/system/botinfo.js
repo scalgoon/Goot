@@ -13,7 +13,7 @@ module.exports = {
 
         let info = new EmbedBuilder()
             .setAuthor({ name: `Information about Goot`, iconURL: client.user.displayAvatarURL() })
-            .setDescription("Emojis provided by <a:emoji_logo:1355338183084081404> [Icons](https://discord.gg/9AtkECMX2P)\nGames provided by [Discord-Gamecord](https://discord-gamecord.js.org/)\n⠀\nHave a question? Join my support server [here](https://discord.com/invite/BDcuC9RbPa)!")
+            .setDescription("Emojis provided by <a:emoji_logo:1355338183084081404> [Icons](https://discord.gg/9AtkECMX2P)\nGames provided by [Discord-Gamecord](https://discord-gamecord.js.org/)\nAvatar provided by @adamgda1199\n⠀\nHave a question? Join my support server [here](https://discord.com/invite/BDcuC9RbPa)!")
             .setColor('#911729')
             .addFields(
                 { name: "Info", value: `\`\`\`yml\nName: ${client.user.tag}\nID: ${client.user.id}\n\`\`\``, inline: true },

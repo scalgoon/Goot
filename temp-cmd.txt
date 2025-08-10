@@ -15,7 +15,8 @@ module.exports = {
 module.exports.config = {
     name: "help",
     usage: "**/help**",
-    description: "Sends the bot\'s ping and latency."
+    description: "Sends the bot\'s ping and latency.",
+	permission: 0
 }
 
 // emojis: <:pass:1355337017357238464> <:fail:1355336960729682021>
