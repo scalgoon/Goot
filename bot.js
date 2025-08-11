@@ -14,13 +14,6 @@ const client = new Client({
 
     ],
     partials: [Partials.User, Partials.Channel, Partials.GuildMember, Partials.Message, Partials.Reaction],
-    presence: {
-        activities: [{
-            name: `my development`,
-            type: ActivityType.Watching
-        }],
-        status: "idle"
-    }
 });
 
 const dotenv = require('dotenv').config();

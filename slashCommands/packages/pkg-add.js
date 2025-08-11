@@ -2,9 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, InteractionConte
 const wait = require('node:timers/promises').setTimeout;
 
 const GuildCommands = require("../../packages/cmdHandler");
-
-const { QuickDB } = require("quick.db");
-const db = new QuickDB();
+const prisma = require('../../utils/prismaClient');
 
 module.exports = {
 	permission: 5,
@@ -18,6 +16,7 @@ module.exports = {
 				.setRequired(true)
 				.addChoices(
 					{ name: 'Canvas', value: 'canvas' },
+					{ name: 'Fun', value: 'fun' },
 					{ name: 'Games', value: 'games' },
 					{ name: 'Moderation', value: 'moderation' },
 				))
@@ -27,13 +26,31 @@ module.exports = {
 
 		const choicePackage = interaction.options.getString('package');
 
-		let hasPackageInstalled = await db.get(`InstalledPackages_${interaction.guild.id}`);
+		const GuildSettings = await prisma.guild.findUnique({
+			where: {
+				id: interaction.guild.id
+			},
+			select: {
+				installed_packages: true
+			}
+		})
 
-		if (hasPackageInstalled) {
+		const hasPackageInstalled = GuildSettings.installed_packages["modules"];
+
+		if (hasPackageInstalled.length !== 0) {
 			checkForRefresh();
 		} else {
 			installPackage();
-			await db.set(`InstalledPackages_${interaction.guild.id}`, [`${choicePackage}`]);
+			await hasPackageInstalled.push(choicePackage);
+
+			await prisma.guild.update({
+				where: {
+					id: interaction.guild.id
+				},
+				data: {
+					installed_packages: GuildSettings.installed_packages
+				}
+			})
 		}
 
 		async function checkForRefresh() {
@@ -41,7 +58,16 @@ module.exports = {
 				hasPackage();
 			} else {
 				installPackage();
-				await db.push(`InstalledPackages_${interaction.guild.id}`, `${choicePackage}`);
+				await hasPackageInstalled.push(choicePackage);
+
+				await prisma.guild.update({
+					where: {
+						id: interaction.guild.id
+					},
+					data: {
+						installed_packages: GuildSettings.installed_packages
+					}
+				})
 			}
 		}
 

@@ -19,10 +19,10 @@ module.exports = {
         let userAvatar = user.displayAvatarURL({ size: 512 });
 
         const avatarbed = new EmbedBuilder()
-            .setTitle(`${user.username}\'s Avatar`)
+            .setAuthor({ name: `Avatar for ${user.username}`, iconURL: interaction.member.displayAvatarURL() })
             .setImage(userAvatar)
             .setTimestamp()
-            .setColor("Random")
+            .setColor("#911729")
 
         await interaction.reply({ embeds: [avatarbed] });
 
@@ -35,5 +35,3 @@ module.exports.config = {
     description: "Fetch a user\'s avatar.",
     permission: 0
 }
-
-// emojis: <:pass:1355337017357238464> <:fail:1355336960729682021>

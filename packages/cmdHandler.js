@@ -5,10 +5,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const dotenv = require('dotenv').config();
 
-const { QuickDB } = require("quick.db");
-const db = new QuickDB();
-
 const { clientCmds } = require('../bot');
+const prisma = require('../utils/prismaClient');
 
 class GuildCommands {
     constructor(guild, cmd, interaction) {
@@ -21,7 +19,16 @@ class GuildCommands {
 
         const commands = [];
 
-        let toInstall = await db.get(`InstalledPackages_${this.guild}`);
+        const GuildSettings = await prisma.guild.findUnique({
+            where: {
+                id: this.guild
+            },
+            select: {
+                installed_packages: true
+            }
+        })
+
+        const toInstall = GuildSettings.installed_packages["modules"];
 
         if (toInstall) {
             for (let i = 0; i < toInstall.length; i++) {
@@ -62,15 +69,11 @@ class GuildCommands {
         // and deploy your commands!
         (async () => {
             try {
-                console.log(`Started refreshing ${commands.length} (${this.cmd}) package guild (/) commands for ${guildId}.`);
-
                 // The put method is used to fully refresh all commands in the guild with the current set
-                const data = await rest.put(
+                await rest.put(
                     Routes.applicationGuildCommands(clientId, guildId),
                     { body: commands },
                 );
-
-                console.log(`Successfully added ${data.length} (${this.cmd}) package guild (/) commands for ${guildId}.`);
             } catch (error) {
                 // And of course, make sure you catch and log any errors!
                 // console.error(error);
@@ -99,16 +102,26 @@ class GuildCommands {
 
         const commands = [];
 
-        let toInstall = await db.get(`InstalledPackages_${this.guild}`);
+        const GuildSettings = await prisma.guild.findUnique({
+            where: {
+                id: this.guild
+            },
+            select: {
+                installed_packages: true
+            }
+        })
 
-        let beforeFilter = Array.from(toInstall);
+        const toInstall = GuildSettings.installed_packages["modules"];
 
-        let afterFilter = beforeFilter.filter(pkg => pkg !== this.cmd);
+        const index = toInstall.indexOf(this.cmd);
+        if (index > -1) {
+            await toInstall.splice(index, 1);
+        }
 
-        for (let i = 0; i < afterFilter.length; i++) {
-            const commandFiles = fs.readdirSync(`./packages/modules/${afterFilter[i]}/commands`).filter(file => file.endsWith('.js'));
+        for (let i = 0; i < toInstall.length; i++) {
+            const commandFiles = fs.readdirSync(`./packages/modules/${toInstall[i]}/commands`).filter(file => file.endsWith('.js'));
             for (const file of commandFiles) {
-                const command = require(`./modules/${afterFilter[i]}/commands/${file}`);
+                const command = require(`./modules/${toInstall[i]}/commands/${file}`);
 
                 if ('data' in command && 'execute' in command) {
                     clientCmds.set(command.data.name, command);
@@ -129,15 +142,11 @@ class GuildCommands {
         // and deploy your commands!
         (async () => {
             try {
-                console.log(`Started refreshing ${commands.length} (${this.cmd}) package guild (/) commands for ${guildId}.`);
-
                 // The put method is used to fully refresh all commands in the guild with the current set
-                const data = await rest.put(
+                await rest.put(
                     Routes.applicationGuildCommands(clientId, guildId),
                     { body: commands },
                 );
-
-                console.log(`Successfully removed ${data.length} (${this.cmd}) package guild (/) commands from ${guildId}.`);
             } catch (error) {
                 // And of course, make sure you catch and log any errors!
                 // console.error(error);
@@ -166,7 +175,16 @@ class GuildCommands {
 
         const commands = [];
 
-        let toInstall = await db.get(`InstalledPackages_${this.guild}`);
+        const GuildSettings = await prisma.guild.findUnique({
+            where: {
+                id: this.guild
+            },
+            select: {
+                installed_packages: true
+            }
+        })
+
+        const toInstall = GuildSettings.installed_packages["modules"];
 
         if (toInstall) {
             for (let i = 0; i < toInstall.length; i++) {
@@ -189,7 +207,7 @@ class GuildCommands {
                 desc: `<:fail:1355336960729682021> There are no packages to reload, contact dev`,
                 color: "Red"
             }
-    
+
             return details;
         }
 
@@ -202,15 +220,11 @@ class GuildCommands {
         // and deploy your commands!
         (async () => {
             try {
-                console.log(`Started refreshing ${commands.length} (${this.cmd}) package guild (/) commands for ${guildId}.`);
-
                 // The put method is used to fully refresh all commands in the guild with the current set
-                const data = await rest.put(
+                await rest.put(
                     Routes.applicationGuildCommands(clientId, guildId),
                     { body: commands },
                 );
-
-                console.log(`Successfully added ${data.length} (${this.cmd}) package guild (/) commands for ${guildId}.`);
             } catch (error) {
                 // And of course, make sure you catch and log any errors!
                 // console.error(error);

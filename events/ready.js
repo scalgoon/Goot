@@ -1,13 +1,11 @@
-const { REST, Routes } = require('discord.js');
+const { REST, Routes, ActivityType } = require('discord.js');
 
 const { table } = require('table');
 const { promisify } = require("util");
 const readdir = promisify(require('fs').readdir);
 
 const { clientCmds } = require('../bot');
-
-const { QuickDB } = require("quick.db");
-const db = new QuickDB();
+const prisma = require('../utils/prismaClient');
 
 require('colors');
 require('dotenv').config();
@@ -22,29 +20,48 @@ module.exports = async (client) => {
         const Guilds = client.guilds.cache.map(guild => guild.id);
 
         const commands = [];
-    
+
         for (let i = 0; i < Guilds.length; i++) {
-        
-            let hasPackagesInstalled = await db.get(`InstalledPackages_${Guilds[i]}`);
-        
+
+            const GuildSettings = await prisma.guild.findUnique({
+                where: {
+                    id: Guilds[i]
+                },
+                select: {
+                    installed_packages: true
+                }
+            })
+
+            const hasPackagesInstalled = GuildSettings.installed_packages["modules"];
+
             if (hasPackagesInstalled) {
                 for (let i = 0; i < hasPackagesInstalled.length; i++) {
                     const commandFiles = fs.readdirSync(`packages/modules/${hasPackagesInstalled[i]}/commands`).filter(file => file.endsWith('.js'));
                     for (const file of commandFiles) {
                         const command = require(`../packages/modules/${hasPackagesInstalled[i]}/commands/${file}`);
-        
+
                         if ('data' in command && 'execute' in command) {
                             clientCmds.set(command.data.name, command);
                             commands.push(command.data.toJSON());
                         } else {
                             console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
                         }
-        
+
                     }
                 }
             }
         }
     })();
+
+    // presence
+
+    client.user.setPresence({
+        activities: [{
+            name: `🦎 ${client.guilds.cache.size} servers configure me!`,
+            type: ActivityType.Watching
+        }],
+        status: 'idle',
+    });
 
     // fancy logs
 

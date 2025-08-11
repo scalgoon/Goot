@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, PermissionFlagsBits } = require('discord.js');
 
-const { QuickDB } = require("quick.db");
-const db = new QuickDB();
+const prisma = require('../../utils/prismaClient');
 
 const fs = require('node:fs');
 
@@ -47,7 +46,16 @@ module.exports = {
 
 		let packagedCmds = [];
 
-		let hasPackagesInstalled = await db.get(`InstalledPackages_${interaction.guild.id}`);
+		const GuildSettings = await prisma.guild.findUnique({
+			where: {
+				id: interaction.guild.id
+			},
+			select: {
+				installed_packages: true
+			}
+		})
+
+		const hasPackagesInstalled = GuildSettings.installed_packages["modules"];
 
 		if (hasPackagesInstalled) {
 			for (let i = 0; i < hasPackagesInstalled.length; i++) {

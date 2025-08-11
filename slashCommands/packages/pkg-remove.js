@@ -1,9 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, InteractionContextType } = require('discord.js');
 
 const GuildCommands = require("../../packages/cmdHandler");
-
-const { QuickDB } = require("quick.db");
-const db = new QuickDB();
+const prisma = require('../../utils/prismaClient');
 
 module.exports = {
 	permission: 5,
@@ -17,6 +15,7 @@ module.exports = {
 				.setRequired(true)
 				.addChoices(
 					{ name: 'Canvas', value: 'canvas' },
+					{ name: 'Fun', value: 'fun' },
 					{ name: 'Games', value: 'games' },
 					{ name: 'Moderation', value: 'moderation' },
 				))
@@ -26,7 +25,16 @@ module.exports = {
 
 		const choicePackage = interaction.options.getString('package');
 
-		let hasPackageInstalled = await db.get(`InstalledPackages_${interaction.guild.id}`);
+		const GuildSettings = await prisma.guild.findUnique({
+			where: {
+				id: interaction.guild.id
+			},
+			select: {
+				installed_packages: true
+			}
+		})
+
+		const hasPackageInstalled = GuildSettings.installed_packages["modules"];
 
 		if (hasPackageInstalled.length > 0) {
 			checkForChoice();
@@ -58,7 +66,19 @@ module.exports = {
 
 			const module = await package.unload();
 
-			await db.pull(`InstalledPackages_${interaction.guild.id}`, `${choicePackage}`);
+			const index = hasPackageInstalled.indexOf(choicePackage);
+			if (index > -1) {
+				await hasPackageInstalled.splice(index, 1);
+			}
+
+			await prisma.guild.update({
+				where: {
+					id: interaction.guild.id
+				},
+				data: {
+					installed_packages: GuildSettings.installed_packages
+				}
+			})
 
 			const finished = new EmbedBuilder()
 				.setTitle(module.title)
