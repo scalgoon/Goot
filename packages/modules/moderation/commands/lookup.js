@@ -15,7 +15,6 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .setContexts(InteractionContextType.Guild),
     async execute(client, interaction) {
-
         const targetUser = interaction.options.getUser('member');
 
         let memtoverify = new VerifyMember(interaction.guild.id, targetUser.id);
@@ -26,10 +25,14 @@ module.exports = {
 
         let member;
 
+        const noMemberFound = new EmbedBuilder()
+            .setDescription(`<:fail:1355336960729682021> You cannot fetch members that are not in the guild.`)
+            .setColor("Red")
+
         try {
             member = await interaction.guild.members.fetch(targetUser.id);
         } catch (e) {
-            return await interaction.reply({ content: "Cannot fetch members that are not in the guild.", flags: MessageFlags.Ephemeral });
+            return await interaction.reply({ embeds: [noMemberFound], flags: MessageFlags.Ephemeral });
         }
 
         let userNickname = member.displayName ?? "No Nickname";
@@ -38,8 +41,10 @@ module.exports = {
 
         let botStatus = targetUser.bot ? "Member is a bot" : "Member is not a bot";
 
+        const embeds = [];
+
         const pageOneEmbed = new EmbedBuilder()
-            .setAuthor({ name: `Information about ${targetUser.username}`, iconURL: interaction.member.displayAvatarURL() })            
+            .setAuthor({ name: `Information about ${targetUser.username}`, iconURL: interaction.member.displayAvatarURL() })
             .setThumbnail(userAvatar)
             .setDescription(`**Bot Check**:\n-# ${botStatus}`)
             .addFields({
@@ -59,6 +64,10 @@ module.exports = {
             .setColor("#911729")
             .setFooter({ text: `User ID: ${targetUser.id}` })
             .setTimestamp(new Date())
+
+        embeds.push(pageOneEmbed);
+
+        // Look up logs
 
         const userInfo = await prisma.user.findUnique({
             where: {
@@ -81,25 +90,44 @@ module.exports = {
             memHeat = heatDBCheck;
         }
 
-        const pageTwoEmbed = new EmbedBuilder()
-            .setAuthor({ name: `Logs for ${targetUser.username}`, iconURL: interaction.member.displayAvatarURL() })    
-            .setThumbnail(userAvatar)
-            .setDescription(`-# Heat Level: ${memHeat}`)
-            .setColor("#911729")
-            .setFooter({ text: `Total of ${userInfo.logs.length} cases` })
-            .setTimestamp(new Date())
+        const paginateLogs = (array, n) => {
+            const pageSize = Math.ceil(array.length / n);
+
+            return Array.from({ length: pageSize }, (_, index) => {
+                const start = index * n;
+                return array.slice(start, start + n);
+            });
+        };
 
         if (userInfo.logs.length === 0 || !userInfo) {
-            pageTwoEmbed.addFields({ name: `Moderation Logs`, value: `*Member has no logs in the database*` });
-        } else {
-            const userLogs = userInfo.logs.slice(0, 5).map((item) => `\n**Log ID: ${item.logid}**\n${item.action} (+${item.heatlvl}) by ${item.staff} - ${item.timestamp}\n-# Duration: ${item.duration ?? "N/A"}\n-# Reason: ${item.reason}`).join('\n');
-            pageTwoEmbed.addFields({ name: `Moderation Logs`, value: userLogs });
-        }
+            const pageTwoEmbed = new EmbedBuilder()
+                .setAuthor({ name: `Logs for ${targetUser.username}`, iconURL: interaction.member.displayAvatarURL() })
+                .setThumbnail(userAvatar)
+                .setDescription(`-# Heat Level: ${memHeat}`)
+                .addFields({ name: `Moderation Logs`, value: `*Member has no logs in the database*` })
+                .setColor("#911729")
+                .setFooter({ text: `Total of ${userInfo.logs.length} cases` })
+                .setTimestamp(new Date())
 
-        const embeds = [];
-        for (var i = 0; i < 2; i++) {
-            if (i + 1 == 1) embeds.push(pageOneEmbed);
-            if (i + 1 == 2) embeds.push(pageTwoEmbed);
+            embeds.push(pageTwoEmbed);
+        } else {
+            const paginatedLogs = paginateLogs(userInfo.logs, 5);
+
+            for (let i = 0; i < paginatedLogs.length; i++) {
+
+                const userLogs = paginatedLogs[i].slice(0, 5).map((item) => `\n**Log ID: ${item.logid}**\n${item.action} (+${item.heatlvl}) by ${item.staff} - ${item.timestamp}\n-# Duration: ${item.duration ?? "N/A"}\n-# Reason: ${item.reason}`).join('\n');
+
+                const dynamicEmbed = new EmbedBuilder()
+                    .setAuthor({ name: `Logs for ${targetUser.username}`, iconURL: interaction.member.displayAvatarURL() })
+                    .setThumbnail(userAvatar)
+                    .setDescription(`-# Heat Level: ${memHeat}`)
+                    .addFields({ name: `Moderation Logs`, value: userLogs })
+                    .setColor("#911729")
+                    .setFooter({ text: `Total of ${userInfo.logs.length} cases` })
+                    .setTimestamp(new Date())
+
+                embeds.push(dynamicEmbed);
+            }
         }
 
         await pagination(interaction, embeds);

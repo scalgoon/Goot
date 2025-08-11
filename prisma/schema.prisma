@@ -18,6 +18,7 @@ model Guild {
   log_chnl String?
   staff_roles Json?
   installed_packages Json?
+  tickets_settings Json?
   custom_commands GuildCustomCommands[]
 }
 
